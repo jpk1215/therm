@@ -9,22 +9,10 @@ export function niceStep(rawStep) {
   return 10 * magnitude;
 }
 
-function resolveStep(maxValue, preferredStep) {
-  const autoStep = niceStep(maxValue / 8);
-  if (!Number.isFinite(preferredStep) || preferredStep <= 0) {
-    return autoStep;
-  }
-
-  let step = niceStep(preferredStep);
-  while ((Math.ceil(maxValue / step) + 1) > 12) {
-    step = niceStep(step * 1.5);
-  }
-
-  return step;
-}
-
-export function getScaleValues(maxValue, preferredStep) {
-  const step = resolveStep(maxValue, preferredStep);
+export function getScaleValues(maxValue) {
+  const maxLabels = 9;
+  const maxIntervals = maxLabels - 1;
+  const step = niceStep(maxValue / maxIntervals);
 
   const values = [0];
   for (let value = step; value < maxValue; value += step) {

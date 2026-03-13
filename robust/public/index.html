@@ -116,17 +116,6 @@
       gap: 0.95rem;
     }
 
-    .field.full-width {
-      grid-column: 1 / -1;
-    }
-
-    .field-help {
-      margin: 0.45rem 0 0;
-      color: var(--muted);
-      font-size: 0.84rem;
-      line-height: 1.4;
-    }
-
     .control-badges {
       display: flex;
       flex-wrap: wrap;
@@ -714,14 +703,9 @@
           <input id="currentValue" data-testid="current-value-input" type="number" min="0" step="1" value="1250">
         </div>
 
-        <div class="field full-width">
-          <label for="incrementValue">Scale Increment</label>
-          <input id="incrementValue" data-testid="increment-value-input" type="number" min="1" step="1" value="10000">
-          <p class="field-help">Controls the milestone labels shown on the thermometer scale.</p>
-        </div>
       </div>
 
-      <div class="controls-note" data-testid="controls-note"><strong>Tip:</strong> Use round increments like `5000`, `10000`, or `25000` for a cleaner projector-friendly scale.</div>
+      <div class="controls-note" data-testid="controls-note"><strong>Tip:</strong> The thermometer scale adjusts automatically based on the goal amount for a cleaner projector-friendly display.</div>
 
       <p class="status" id="statusText" data-testid="status-text"><strong>Status:</strong> Initializing...</p>
       <p class="sync-meta" id="syncMeta" data-testid="sync-meta">Waiting for first live update...</p>
@@ -738,7 +722,6 @@
       <div class="amounts" data-testid="display-summary">
         <div><span>Raised:</span> <span class="value" id="raisedText" data-testid="raised-text">$0</span></div>
         <div><span>Goal:</span> <span class="value" id="goalText" data-testid="goal-text">$0</span></div>
-        <div><span>Step:</span> <span class="value" id="stepText" data-testid="step-text">$0</span></div>
         <div><span>Progress:</span> <span class="value" id="percentText" data-testid="percent-text">0%</span></div>
       </div>
 

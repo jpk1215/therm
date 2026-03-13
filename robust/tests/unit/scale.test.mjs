@@ -32,35 +32,3 @@ test("getScaleValues preserves exact evenly spaced top value", () => {
     100000
   ]);
 });
-
-test("getScaleValues honors a practical preferred increment", () => {
-  assert.deepEqual(getScaleValues(100000, 10000), [
-    0,
-    10000,
-    20000,
-    30000,
-    40000,
-    50000,
-    60000,
-    70000,
-    80000,
-    90000,
-    100000
-  ]);
-});
-
-test("getScaleValues increases tiny preferred increments to avoid overcrowding", () => {
-  assert.deepEqual(getScaleValues(100000, 1000), [
-    0,
-    10000,
-    20000,
-    30000,
-    40000,
-    50000,
-    60000,
-    70000,
-    80000,
-    90000,
-    100000
-  ]);
-});

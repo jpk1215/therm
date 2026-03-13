@@ -30,14 +30,12 @@ const tokenBadgeEl = document.getElementById("tokenBadge");
 const syncMetaEl = document.getElementById("syncMeta");
 const maxInput = document.getElementById("maxValue");
 const currentInput = document.getElementById("currentValue");
-const incrementInput = document.getElementById("incrementValue");
 const fillEl = document.getElementById("fill");
 const tickListEl = document.getElementById("tickList");
 const raisedTextEl = document.getElementById("raisedText");
 const goalTextEl = document.getElementById("goalText");
-const stepTextEl = document.getElementById("stepText");
 const percentTextEl = document.getElementById("percentText");
-const controlInputs = [maxInput, currentInput, incrementInput];
+const controlInputs = [maxInput, currentInput];
 
 let isEditing = false;
 let suppressRemoteUntilMs = 0;
@@ -63,14 +61,12 @@ if (mode === "display") {
 function applyStateToInputs(state) {
   maxInput.value = String(state.maxValue);
   currentInput.value = String(state.currentValue);
-  incrementInput.value = String(state.incrementValue);
 }
 
 function readStateFromInputs() {
   return normalizeState({
     maxValue: maxInput.value,
-    currentValue: currentInput.value,
-    incrementValue: incrementInput.value
+    currentValue: currentInput.value
   });
 }
 
@@ -153,14 +149,14 @@ function setStatus(message, type = "ok") {
   }
 }
 
-function createTicks(maxValue, incrementValue) {
-  const tickSignature = `${maxValue}:${incrementValue}`;
+function createTicks(maxValue) {
+  const tickSignature = String(maxValue);
   if (lastRenderedTickMaxValue === tickSignature) {
     return;
   }
 
   tickListEl.innerHTML = "";
-  const scaleValues = getScaleValues(maxValue, incrementValue);
+  const scaleValues = getScaleValues(maxValue);
   const fragment = document.createDocumentFragment();
 
   for (const tickValue of scaleValues) {
@@ -195,12 +191,11 @@ function renderThermometer(state, options = {}) {
     fillEl.setAttribute("aria-valuenow", String(Math.round(percent)));
     raisedTextEl.textContent = formatMoney(normalized.currentValue);
     goalTextEl.textContent = formatMoney(normalized.maxValue);
-    stepTextEl.textContent = formatMoney(normalized.incrementValue);
     percentTextEl.textContent = `${Math.round(percent)}%`;
     lastRenderedStateKey = stateKey;
   }
 
-  createTicks(normalized.maxValue, normalized.incrementValue);
+  createTicks(normalized.maxValue);
 
   if (mode === "control" && shouldSyncInputs) {
     applyStateToInputs(normalized);
@@ -281,17 +276,12 @@ if (mode === "control") {
 
   maxInput.addEventListener("input", debouncedPush);
   currentInput.addEventListener("input", debouncedPush);
-  incrementInput.addEventListener("input", debouncedPush);
 
   maxInput.addEventListener("input", () => {
     suppressRemoteUntilMs = Date.now() + (POLL_MS * 2);
   });
 
   currentInput.addEventListener("input", () => {
-    suppressRemoteUntilMs = Date.now() + (POLL_MS * 2);
-  });
-
-  incrementInput.addEventListener("input", () => {
     suppressRemoteUntilMs = Date.now() + (POLL_MS * 2);
   });
 
@@ -302,12 +292,6 @@ if (mode === "control") {
   });
 
   currentInput.addEventListener("change", () => {
-    pushState().catch(() => {
-      setStatus("Could not sync update. Check token/connection.", "error");
-    });
-  });
-
-  incrementInput.addEventListener("change", () => {
     pushState().catch(() => {
       setStatus("Could not sync update. Check token/connection.", "error");
     });
