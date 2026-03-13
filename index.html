@@ -50,10 +50,6 @@
       padding: 1.6rem;
     }
 
-    .controls.hidden {
-      display: none;
-    }
-
     h1 {
       margin: 0 0 0.5rem;
       font-size: 1.6rem;
@@ -269,11 +265,6 @@
       }
     }
 
-    .container.display-mode {
-      grid-template-columns: 1fr;
-      width: min(760px, 100% - 2rem);
-    }
-
     @media (max-width: 430px) {
       .controls,
       .display {
@@ -324,7 +315,7 @@
         <input id="currentValue" type="number" min="0" step="1" value="1250">
       </div>
 
-      <p class="status" id="statusText"><strong>Tip:</strong> values update smoothly as you type.</p>
+      <p class="status"><strong>Tip:</strong> values update smoothly as you type.</p>
     </section>
 
     <section class="card display" aria-live="polite">
@@ -348,58 +339,16 @@
     </section>
   </main>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import {
-      getDatabase,
-      onValue,
-      ref,
-      set,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "REPLACE_WITH_FIREBASE_API_KEY",
-      authDomain: "REPLACE_WITH_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://REPLACE_WITH_DATABASE_NAME-default-rtdb.firebaseio.com",
-      projectId: "REPLACE_WITH_PROJECT_ID",
-      appId: "REPLACE_WITH_APP_ID"
-    };
-
-    const HAS_FIREBASE_CONFIG = !Object.values(firebaseConfig).some((value) =>
-      String(value).includes("REPLACE_WITH_")
-    );
-
-    const DEFAULT_STATE = {
-      maxValue: 100000,
-      incrementValue: 10000,
-      currentValue: 1250
-    };
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get("mode") === "display" ? "display" : "control";
-    const campaignId = urlParams.get("campaign") || "default";
-
-    const containerEl = document.querySelector(".container");
-    const controlsEl = document.querySelector(".controls");
+  <script>
     const maxInput = document.getElementById("maxValue");
     const incrementInput = document.getElementById("incrementValue");
     const currentInput = document.getElementById("currentValue");
-    const statusTextEl = document.getElementById("statusText");
 
     const fillEl = document.getElementById("fill");
     const tickListEl = document.getElementById("tickList");
     const raisedTextEl = document.getElementById("raisedText");
     const goalTextEl = document.getElementById("goalText");
     const percentTextEl = document.getElementById("percentText");
-
-    let db;
-    let stateRef;
-
-    if (mode === "display") {
-      controlsEl.classList.add("hidden");
-      containerEl.classList.add("display-mode");
-    }
 
     function toPositiveNumber(value, fallback) {
       const parsed = Number(value);
@@ -435,40 +384,6 @@
       };
     }
 
-    function setStatus(message, kind = "info") {
-      if (kind === "error") {
-        statusTextEl.innerHTML = "<strong>Status:</strong> " + message;
-        statusTextEl.style.background = "#fff4f4";
-        statusTextEl.style.borderColor = "#f3cccc";
-      } else {
-        statusTextEl.innerHTML = "<strong>Status:</strong> " + message;
-        statusTextEl.style.background = "#f3faf5";
-        statusTextEl.style.borderColor = "#d7e9dc";
-      }
-    }
-
-    function normalizeState(rawState) {
-      const maxValue = toPositiveNumber(rawState?.maxValue, DEFAULT_STATE.maxValue);
-      const incrementValue = toPositiveNumber(rawState?.incrementValue, DEFAULT_STATE.incrementValue);
-      const currentValueRaw = toNonNegativeNumber(rawState?.currentValue, DEFAULT_STATE.currentValue);
-      const currentValue = Math.min(currentValueRaw, maxValue);
-      return { maxValue, incrementValue, currentValue };
-    }
-
-    function readStateFromInputs() {
-      return normalizeState({
-        maxValue: maxInput.value,
-        incrementValue: incrementInput.value,
-        currentValue: currentInput.value
-      });
-    }
-
-    function applyStateToInputs(state) {
-      maxInput.value = String(state.maxValue);
-      incrementInput.value = String(state.incrementValue);
-      currentInput.value = String(state.currentValue);
-    }
-
     function createTicks(maxValue, incrementValue) {
       tickListEl.innerHTML = "";
       const totalTicks = Math.max(1, Math.ceil(maxValue / incrementValue));
@@ -497,8 +412,22 @@
       }
     }
 
-    function renderThermometer(state) {
-      const { maxValue, incrementValue, currentValue } = normalizeState(state);
+    function updateThermometer() {
+      const maxValue = toPositiveNumber(maxInput.value, 1);
+      const incrementValue = toPositiveNumber(incrementInput.value, 1);
+      const currentValueRaw = toNonNegativeNumber(currentInput.value, 0);
+      const currentValue = Math.min(currentValueRaw, maxValue);
+
+      if (currentValueRaw !== currentValue) {
+        currentInput.value = String(currentValue);
+      }
+      if (Number(maxInput.value) !== maxValue) {
+        maxInput.value = String(maxValue);
+      }
+      if (Number(incrementInput.value) !== incrementValue) {
+        incrementInput.value = String(incrementValue);
+      }
+
       const percent = (currentValue / maxValue) * 100;
       fillEl.style.height = percent + "%";
 
@@ -509,92 +438,17 @@
       createTicks(maxValue, incrementValue);
     }
 
-    function pushInputState() {
-      if (mode !== "control" || !stateRef) {
-        return;
-      }
-      const state = readStateFromInputs();
-      applyStateToInputs(state);
-      renderThermometer(state);
-      setStatus("Syncing update...");
-      set(stateRef, {
-        ...state,
-        updatedAt: serverTimestamp()
-      })
-        .then(() => {
-          setStatus("Live and synced.");
-        })
-        .catch(() => {
-          setStatus("Could not sync. Check your connection.", "error");
-        });
-    }
+    const debouncedUpdateThermometer = debounce(updateThermometer, 180);
 
-    const debouncedPushInputState = debounce(pushInputState, 180);
+    maxInput.addEventListener("input", debouncedUpdateThermometer);
+    incrementInput.addEventListener("input", debouncedUpdateThermometer);
+    currentInput.addEventListener("input", debouncedUpdateThermometer);
 
-    maxInput.addEventListener("input", debouncedPushInputState);
-    incrementInput.addEventListener("input", debouncedPushInputState);
-    currentInput.addEventListener("input", debouncedPushInputState);
+    maxInput.addEventListener("change", updateThermometer);
+    incrementInput.addEventListener("change", updateThermometer);
+    currentInput.addEventListener("change", updateThermometer);
 
-    maxInput.addEventListener("change", pushInputState);
-    incrementInput.addEventListener("change", pushInputState);
-    currentInput.addEventListener("change", pushInputState);
-
-    if (!HAS_FIREBASE_CONFIG) {
-      renderThermometer(DEFAULT_STATE);
-      applyStateToInputs(DEFAULT_STATE);
-      if (mode === "display") {
-        setStatus("Firebase config missing. Add config values to enable live display.", "error");
-      } else {
-        setStatus("Firebase config missing. Add config values to enable phone sync.", "error");
-      }
-    } else {
-      const app = initializeApp(firebaseConfig);
-      db = getDatabase(app);
-      stateRef = ref(db, "campaigns/" + campaignId);
-
-      setStatus(
-        mode === "display"
-          ? "Display mode connected. Waiting for remote updates..."
-          : "Control mode connected. Changes sync live."
-      );
-
-      onValue(
-        stateRef,
-        (snapshot) => {
-          const snapshotValue = snapshot.val();
-          if (!snapshotValue) {
-            const seededState = readStateFromInputs();
-            renderThermometer(seededState);
-            applyStateToInputs(seededState);
-            if (mode === "control") {
-              set(stateRef, {
-                ...seededState,
-                updatedAt: serverTimestamp()
-              })
-                .then(() => setStatus("Live and synced."))
-                .catch(() =>
-                  setStatus("Connected, but initial sync failed.", "error")
-                );
-            } else {
-              setStatus("Waiting for controller to publish first update...");
-            }
-            return;
-          }
-
-          const normalized = normalizeState(snapshotValue);
-          applyStateToInputs(normalized);
-          renderThermometer(normalized);
-          setStatus(
-            mode === "display"
-              ? "Live display active."
-              : "Live and synced."
-          );
-        },
-        () => {
-          setStatus("Connection issue. Retrying...", "error");
-        }
-      );
-    }
+    updateThermometer();
   </script>
 </body>
 </html>
