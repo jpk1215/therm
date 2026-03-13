@@ -1,26 +1,46 @@
-# Thermometer Hosting Layout
+# Therm
 
-This repo now supports two paths:
+Therm provides display and control interfaces for campaign state, with separate static and production deployment targets.
 
-- `index.html` at repo root: simple static page for GitHub Pages.
-- `robust/`: separate app scaffold for a more secure hosted setup that uses environment variables and avoids committing secrets.
+## Repository Structure
 
-## Which host to use
+- `index.html`: static client suitable for GitHub Pages.
+- `robust/`: production application with serverless API routes and environment-based secret management.
 
-For the robust app, use **Vercel**.
+## Deployment Targets
 
-Why:
-- quick deploy from GitHub
-- easy environment variable management
-- serverless API routes for write protection
+- **Static preview**: GitHub Pages  
+  `https://jpk1215.github.io/therm/`
+- **Production**: Vercel with `robust/` configured as the project root.
 
-## Current GitHub Pages URL
+## Interface Usage
 
-`https://jpk1215.github.io/therm/`
+All routes below assume the deployed `robust/` base URL.
 
-## Next step
+- **Display interface**  
+  Use the default route or explicit query parameters:  
+  `/`  
+  `/?mode=display&campaign=default`
 
-Open `robust/README.md` and follow:
-1. Firebase project setup
-2. secret/env setup
-3. Vercel deploy
+- **Control interface**  
+  Open control mode with campaign and admin token:  
+  `/?mode=control&campaign=default&token=YOUR_ADMIN_WRITE_TOKEN`
+
+- **Token handling**  
+  On first load, the client stores `token` in `localStorage` and removes it from the URL.  
+  Subsequent control updates use the stored token for `POST /api/state` authorization.
+
+## Production Architecture (`robust/`)
+
+- Read access is served to clients via `GET /api/state`.
+- State updates flow through `POST /api/state` and require an admin token.
+- Firebase Admin credentials are sourced from environment variables and never committed.
+- Realtime Database rules should block direct browser writes.
+
+## Deployment Runbook
+
+Follow `robust/README.md` for operational setup:
+
+1. Firebase project and Realtime Database provisioning
+2. Environment variable configuration
+3. Vercel project import and deploy
