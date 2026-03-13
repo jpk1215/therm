@@ -20,6 +20,7 @@ test.describe("thermometer smoke flows", () => {
     await expect(page.getByTestId("raised-text")).toHaveText("$8,000");
     await expect(page.getByTestId("goal-text")).toHaveText("$75,000");
     await expect(page.getByTestId("percent-text")).toHaveText("11%");
+    await expect(page.getByTestId("display-cta")).toBeHidden();
     await expect(page.getByTestId("tick-list").locator("li")).toHaveCount(8);
     await expect(page.getByTestId("thermometer-fill")).toHaveAttribute("aria-valuenow", "11");
   });
@@ -37,10 +38,20 @@ test.describe("thermometer smoke flows", () => {
     await displayPage.goto("/?mode=display&campaign=sync-smoke");
     await controlPage.goto("/?mode=control&campaign=sync-smoke&token=test-admin-token");
 
+    const controlSummary = controlPage.getByTestId("display-summary");
+    await expect(controlSummary).toBeVisible();
+    await expect(controlSummary.locator(":scope > div")).toHaveCount(3);
+    await expect(controlPage.getByTestId("raised-text")).toHaveText("$1,250");
+    await expect(controlPage.getByTestId("goal-text")).toHaveText("$100,000");
+    await expect(controlPage.getByTestId("percent-text")).toHaveText("1%");
+
     await controlPage.getByTestId("max-value-input").fill("120000");
     await controlPage.getByTestId("current-value-input").fill("36000");
     await controlPage.getByTestId("current-value-input").blur();
 
+    await expect.poll(async () => controlPage.getByTestId("raised-text").textContent()).toBe("$36,000");
+    await expect.poll(async () => controlPage.getByTestId("goal-text").textContent()).toBe("$120,000");
+    await expect.poll(async () => controlPage.getByTestId("percent-text").textContent()).toBe("30%");
     await expect.poll(async () => displayPage.getByTestId("raised-text").textContent()).toBe("$36,000");
     await expect.poll(async () => displayPage.getByTestId("goal-text").textContent()).toBe("$120,000");
     await expect.poll(async () => displayPage.getByTestId("percent-text").textContent()).toBe("30%");
