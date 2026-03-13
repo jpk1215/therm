@@ -59,10 +59,15 @@ Writes then go only through your serverless `POST /api/state` route.
 3. Add all env vars from `.env.example`.
 4. Deploy.
 
-## Next implementation step
+## Live mode URLs
 
-Create a `public/index.html` (or React app) inside `robust/` that:
-- polls or subscribes to `/api/state` for display mode
-- posts updates to `/api/state` with `x-admin-token` in control mode
+- Projector display:
+  - `/` defaults to display mode, or use `/?mode=display&campaign=default`
+- Phone control:
+  - `/?mode=control&campaign=default&token=YOUR_ADMIN_WRITE_TOKEN`
 
-This keeps Firebase admin credentials off the client and out of git history.
+Token handling:
+- If `token` is in the URL once, the page stores it in `localStorage` and removes it from the URL.
+- Control mode writes with `x-admin-token` header through `/api/state`.
+
+This keeps Firebase admin credentials off the client and out of git history while still allowing remote updates from phone.

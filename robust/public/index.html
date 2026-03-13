@@ -3,35 +3,563 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Thermometer Robust App</title>
+  <title>Fundraising Thermometer</title>
   <style>
+    :root {
+      --bg: #ecf7f0;
+      --card: #ffffff;
+      --text: #08371e;
+      --muted: #3f5d4b;
+      --primary: #01411c;
+      --track: #d9e8de;
+      --tick: #5f7d6b;
+      --border: #c9ddd0;
+      --shadow: 0 16px 40px rgba(1, 65, 28, 0.12);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f7f5;
-      color: #123;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #ffffff, var(--bg));
     }
-    main {
-      max-width: 720px;
-      margin: 3rem auto;
-      background: #fff;
-      border: 1px solid #d9e3dd;
+
+    .container {
+      width: min(1080px, 100% - 2.5rem);
+      margin: 2rem auto 3rem;
+      display: grid;
+      grid-template-columns: minmax(300px, 380px) 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .container.display-mode {
+      grid-template-columns: 1fr;
+      width: min(760px, 100% - 2rem);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      padding: 1.6rem;
+    }
+
+    .controls.hidden {
+      display: none;
+    }
+
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: 1.6rem;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      margin: 0 0 1.35rem;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .field {
+      margin-bottom: 1.05rem;
+    }
+
+    label {
+      display: inline-block;
+      margin-bottom: 0.45rem;
+      font-size: 0.93rem;
+      font-weight: 600;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.82rem 0.9rem;
+      border: 1.5px solid var(--border);
       border-radius: 12px;
-      padding: 1.25rem;
+      font-size: 1rem;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
     }
-    code {
-      background: #eef4f0;
-      padding: 0.1rem 0.3rem;
-      border-radius: 4px;
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #0b6f35;
+      box-shadow: 0 0 0 4px rgba(11, 111, 53, 0.12);
+    }
+
+    .status {
+      margin-top: 1.15rem;
+      margin-bottom: 0;
+      padding: 0.75rem 0.85rem;
+      background: #f3faf5;
+      border: 1px solid #d7e9dc;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .status strong {
+      color: var(--text);
+    }
+
+    .display {
+      padding: 1.6rem 1.6rem 1.4rem 2.2rem;
+      min-height: 580px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .display::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 24px;
+      background: linear-gradient(180deg, #036a2f, var(--primary));
+    }
+
+    .display::after {
+      content: "☪ ★";
+      position: absolute;
+      top: 0.9rem;
+      right: 1rem;
+      font-size: 1.05rem;
+      color: rgba(1, 65, 28, 0.7);
+      letter-spacing: 0.08rem;
+    }
+
+    .amounts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 0.95rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.95rem;
+    }
+
+    .amounts > div {
+      padding: 0.7rem 0.82rem;
+      border: 1px solid #d8e8dd;
+      border-radius: 12px;
+      background: #f8fcf9;
+      min-width: 138px;
+    }
+
+    .amounts > div span:first-child {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .amounts .value {
+      font-size: 1.24rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .thermometer-wrap {
+      flex: 1;
+      min-height: 390px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 1rem 0.8rem 0.4rem;
+    }
+
+    .thermometer {
+      position: relative;
+      width: min(420px, 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .scale {
+      position: relative;
+      height: clamp(300px, 52vh, 500px);
+      width: 146px;
+    }
+
+    .track {
+      position: absolute;
+      right: 0;
+      bottom: 46px;
+      width: 58px;
+      height: calc(100% - 56px);
+      background: var(--track);
+      border-radius: 999px;
+      border: 1px solid #cadecf;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+      overflow: hidden;
+    }
+
+    .fill {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 0;
+      background: linear-gradient(180deg, #11a04a, var(--primary));
+      border-top: 2px solid rgba(255, 255, 255, 0.35);
+      transition: height 250ms ease;
+    }
+
+    .bulb {
+      position: absolute;
+      right: -9px;
+      bottom: 0;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 1px solid #013017;
+      box-shadow: inset 0 -6px 10px rgba(0, 0, 0, 0.16);
+    }
+
+    .tick-list {
+      position: absolute;
+      left: 0;
+      right: 70px;
+      bottom: 56px;
+      height: calc(100% - 66px);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tick-list li {
+      position: absolute;
+      left: 0;
+      transform: translateY(50%);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+      color: var(--tick);
+      font-size: 0.84rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .tick-mark {
+      width: 24px;
+      height: 2px;
+      background: var(--tick);
+    }
+
+    @media (max-width: 780px) {
+      .container {
+        grid-template-columns: 1fr;
+        width: min(700px, 100% - 1.25rem);
+      }
+
+      .display {
+        min-height: 500px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .controls,
+      .display {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.32rem;
+      }
+
+      .display::before {
+        width: 14px;
+      }
+
+      .scale {
+        width: 122px;
+      }
+
+      .track {
+        width: 50px;
+      }
+
+      .bulb {
+        width: 66px;
+        height: 66px;
+      }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Robust App Scaffold</h1>
-    <p>This folder is ready for a Vercel deployment with env-based Firebase admin credentials.</p>
-    <p>API endpoint available at <code>/api/state?campaign=default</code>.</p>
-    <p>Next: implement display/control UI that reads/writes through this API.</p>
+  <main class="container" id="container">
+    <section class="card controls" id="controls">
+      <h1>Fundraising Thermometer</h1>
+      <p class="subtitle" id="subtitle">Use control mode on your phone to update the live display.</p>
+
+      <div class="field">
+        <label for="maxValue">Goal / Max Value</label>
+        <input id="maxValue" type="number" min="1" step="1" value="100000">
+      </div>
+
+      <div class="field">
+        <label for="incrementValue">Increment</label>
+        <input id="incrementValue" type="number" min="1" step="1" value="10000">
+      </div>
+
+      <div class="field">
+        <label for="currentValue">Current Value</label>
+        <input id="currentValue" type="number" min="0" step="1" value="1250">
+      </div>
+
+      <p class="status" id="statusText"><strong>Status:</strong> Initializing...</p>
+    </section>
+
+    <section class="card display" aria-live="polite">
+      <div class="amounts">
+        <div><span>Raised:</span> <span class="value" id="raisedText">$0</span></div>
+        <div><span>Goal:</span> <span class="value" id="goalText">$0</span></div>
+        <div><span>Progress:</span> <span class="value" id="percentText">0%</span></div>
+      </div>
+
+      <div class="thermometer-wrap">
+        <div class="thermometer">
+          <div class="scale">
+            <ul class="tick-list" id="tickList"></ul>
+            <div class="track">
+              <div class="fill" id="fill"></div>
+            </div>
+            <div class="bulb"></div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <script>
+    const DEFAULT_STATE = {
+      maxValue: 100000,
+      incrementValue: 10000,
+      currentValue: 1250
+    };
+    const POLL_MS = 1500;
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get("mode") === "control" ? "control" : "display";
+    const campaign = params.get("campaign") || "default";
+    const tokenParam = params.get("token");
+    const tokenStorageKey = "therm-admin-token:" + campaign;
+
+    if (tokenParam) {
+      localStorage.setItem(tokenStorageKey, tokenParam);
+      params.delete("token");
+      const cleanQuery = params.toString();
+      history.replaceState(null, "", window.location.pathname + (cleanQuery ? "?" + cleanQuery : ""));
+    }
+
+    const adminToken = localStorage.getItem(tokenStorageKey) || "";
+
+    const containerEl = document.getElementById("container");
+    const controlsEl = document.getElementById("controls");
+    const subtitleEl = document.getElementById("subtitle");
+    const statusTextEl = document.getElementById("statusText");
+    const maxInput = document.getElementById("maxValue");
+    const incrementInput = document.getElementById("incrementValue");
+    const currentInput = document.getElementById("currentValue");
+    const fillEl = document.getElementById("fill");
+    const tickListEl = document.getElementById("tickList");
+    const raisedTextEl = document.getElementById("raisedText");
+    const goalTextEl = document.getElementById("goalText");
+    const percentTextEl = document.getElementById("percentText");
+
+    if (mode === "display") {
+      controlsEl.classList.add("hidden");
+      containerEl.classList.add("display-mode");
+    } else {
+      subtitleEl.textContent = "Control mode is active. Updates are synced to the live display.";
+    }
+
+    function toPositiveNumber(value, fallback) {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed)) return fallback;
+      return parsed > 0 ? parsed : fallback;
+    }
+
+    function toNonNegativeNumber(value, fallback) {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed)) return fallback;
+      return parsed >= 0 ? parsed : fallback;
+    }
+
+    function normalizeState(rawState) {
+      const maxValue = toPositiveNumber(rawState?.maxValue, DEFAULT_STATE.maxValue);
+      const incrementValue = toPositiveNumber(rawState?.incrementValue, DEFAULT_STATE.incrementValue);
+      const currentRaw = toNonNegativeNumber(rawState?.currentValue, DEFAULT_STATE.currentValue);
+      const currentValue = Math.min(currentRaw, maxValue);
+      return { maxValue, incrementValue, currentValue };
+    }
+
+    function applyStateToInputs(state) {
+      maxInput.value = String(state.maxValue);
+      incrementInput.value = String(state.incrementValue);
+      currentInput.value = String(state.currentValue);
+    }
+
+    function readStateFromInputs() {
+      return normalizeState({
+        maxValue: maxInput.value,
+        incrementValue: incrementInput.value,
+        currentValue: currentInput.value
+      });
+    }
+
+    function formatMoney(value) {
+      return new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function debounce(callback, delayMs) {
+      let timerId;
+      return (...args) => {
+        clearTimeout(timerId);
+        timerId = setTimeout(() => callback(...args), delayMs);
+      };
+    }
+
+    function setStatus(message, type = "ok") {
+      statusTextEl.innerHTML = "<strong>Status:</strong> " + message;
+      if (type === "error") {
+        statusTextEl.style.background = "#fff4f4";
+        statusTextEl.style.borderColor = "#f3cccc";
+      } else {
+        statusTextEl.style.background = "#f3faf5";
+        statusTextEl.style.borderColor = "#d7e9dc";
+      }
+    }
+
+    function createTicks(maxValue, incrementValue) {
+      tickListEl.innerHTML = "";
+      const totalTicks = Math.max(1, Math.ceil(maxValue / incrementValue));
+
+      for (let i = 0; i <= totalTicks; i += 1) {
+        const raw = i * incrementValue;
+        const tickValue = raw > maxValue ? maxValue : raw;
+        const positionPercent = (tickValue / maxValue) * 100;
+
+        const li = document.createElement("li");
+        li.style.bottom = positionPercent + "%";
+
+        const mark = document.createElement("span");
+        mark.className = "tick-mark";
+
+        const label = document.createElement("span");
+        label.textContent = formatMoney(tickValue);
+
+        li.appendChild(mark);
+        li.appendChild(label);
+        tickListEl.appendChild(li);
+
+        if (tickValue >= maxValue) break;
+      }
+    }
+
+    function renderThermometer(state) {
+      const normalized = normalizeState(state);
+      const percent = (normalized.currentValue / normalized.maxValue) * 100;
+      fillEl.style.height = percent + "%";
+      raisedTextEl.textContent = formatMoney(normalized.currentValue);
+      goalTextEl.textContent = formatMoney(normalized.maxValue);
+      percentTextEl.textContent = Math.round(percent) + "%";
+      createTicks(normalized.maxValue, normalized.incrementValue);
+
+      if (mode === "control") {
+        applyStateToInputs(normalized);
+      }
+    }
+
+    async function fetchState() {
+      const response = await fetch("/api/state?campaign=" + encodeURIComponent(campaign), { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+      return response.json();
+    }
+
+    async function pushState() {
+      if (mode !== "control") return;
+      if (!adminToken) {
+        setStatus("Missing token. Open control URL with ?token=YOUR_ADMIN_WRITE_TOKEN", "error");
+        return;
+      }
+
+      const state = readStateFromInputs();
+      renderThermometer(state);
+      setStatus("Syncing update...");
+
+      const response = await fetch("/api/state?campaign=" + encodeURIComponent(campaign), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-token": adminToken
+        },
+        body: JSON.stringify(state)
+      });
+
+      if (!response.ok) {
+        throw new Error("Write failed");
+      }
+
+      setStatus("Live and synced.");
+    }
+
+    const debouncedPush = debounce(() => {
+      pushState().catch(() => {
+        setStatus("Could not sync update. Check token/connection.", "error");
+      });
+    }, 220);
+
+    if (mode === "control") {
+      maxInput.addEventListener("input", debouncedPush);
+      incrementInput.addEventListener("input", debouncedPush);
+      currentInput.addEventListener("input", debouncedPush);
+      maxInput.addEventListener("change", debouncedPush);
+      incrementInput.addEventListener("change", debouncedPush);
+      currentInput.addEventListener("change", debouncedPush);
+    }
+
+    async function refreshLoop() {
+      try {
+        const latest = await fetchState();
+        renderThermometer(latest);
+        if (mode === "display") {
+          setStatus("Display mode live. Campaign: " + campaign);
+        } else if (adminToken) {
+          setStatus("Control mode live. Campaign: " + campaign);
+        } else {
+          setStatus("Control mode loaded, but token is missing.", "error");
+        }
+      } catch (_error) {
+        setStatus("Unable to reach live state. Retrying...", "error");
+      }
+    }
+
+    renderThermometer(DEFAULT_STATE);
+    refreshLoop();
+    setInterval(refreshLoop, POLL_MS);
+  </script>
 </body>
 </html>
