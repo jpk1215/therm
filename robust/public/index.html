@@ -53,7 +53,7 @@
       width: min(860px, 100% - 1rem);
       height: 100vh;
       margin: 0 auto;
-      padding: 0.4rem 0;
+      padding: 0.2rem 0;
       align-items: stretch;
     }
 
@@ -345,7 +345,7 @@
       height: 100%;
       min-height: 0;
       max-height: 100%;
-      padding: clamp(0.8rem, 1.8vh, 1.2rem) clamp(1rem, 2.4vw, 1.45rem) clamp(0.7rem, 1.7vh, 1rem);
+      padding: clamp(0.55rem, 1.2vh, 0.9rem) clamp(0.95rem, 2.2vw, 1.35rem) clamp(0.45rem, 1.1vh, 0.8rem);
       border: 2px solid #ddbf76;
       border-radius: min(34vw, 320px) min(34vw, 320px) 30px 30px;
       box-shadow:
@@ -369,7 +369,7 @@
       display: block;
       text-align: center;
       margin-top: 0;
-      margin-bottom: clamp(0.2rem, 1vh, 0.55rem);
+      margin-bottom: clamp(0.1rem, 0.55vh, 0.28rem);
       position: relative;
       z-index: 2;
     }
@@ -386,7 +386,7 @@
     }
 
     .container.display-mode .festival-header p {
-      margin: 0.28rem 0 0;
+      margin: 0.16rem 0 0;
       font-size: clamp(0.8rem, 1.5vw, 0.95rem);
       font-weight: 700;
       color: #7a5a17;
@@ -396,7 +396,7 @@
 
     .container.display-mode .festival-crescent {
       display: inline-block;
-      margin-bottom: 0.05rem;
+      margin-bottom: 0;
       font-size: clamp(1.4rem, 2.8vw, 1.85rem);
       color: #cca13e;
       text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -405,10 +405,10 @@
     .container.display-mode .arch-frame {
       display: grid;
       grid-template-rows: auto 1fr;
-      gap: clamp(0.25rem, 0.9vh, 0.55rem);
+      gap: clamp(0.12rem, 0.45vh, 0.28rem);
       flex: 1;
       min-height: 0;
-      padding: clamp(0.45rem, 1.1vh, 0.8rem) clamp(0.45rem, 1.2vw, 0.75rem) clamp(0.35rem, 0.9vh, 0.6rem);
+      padding: clamp(0.28rem, 0.7vh, 0.5rem) clamp(0.42rem, 1vw, 0.65rem) clamp(0.25rem, 0.65vh, 0.45rem);
       border: 2px solid rgba(206, 163, 69, 0.7);
       border-radius: 250px 250px 24px 24px;
       background: linear-gradient(180deg, rgba(255, 252, 245, 0.78), rgba(250, 240, 213, 0.62));
@@ -417,13 +417,14 @@
 
     .container.display-mode .amounts {
       justify-content: center;
-      gap: 0.8rem;
+      gap: 0.65rem;
       margin-bottom: 0;
     }
 
     .container.display-mode .amounts > div {
       min-width: clamp(130px, 19vw, 165px);
       text-align: center;
+      padding: 0.55rem 0.78rem;
       border: 2px solid rgba(195, 150, 50, 0.68);
       background: linear-gradient(180deg, #fffdf8 0%, #f6e7bf 100%);
       box-shadow:
@@ -441,14 +442,14 @@
     .container.display-mode .thermometer-wrap {
       min-height: 0;
       height: 100%;
-      padding: clamp(0.2rem, 0.8vh, 0.55rem) 0.2rem 0.2rem;
+      padding: clamp(0.05rem, 0.2vh, 0.12rem) 0.2rem 0.05rem;
       align-items: center;
     }
 
     .container.display-mode .thermometer {
       width: min(560px, 100%);
       gap: 1.35rem;
-      padding: 0.2rem 0.15rem;
+      padding: 0.1rem 0.1rem 0;
       border-radius: 26px;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(250, 238, 209, 0.34));
       border: 1px solid rgba(200, 160, 70, 0.36);
@@ -456,7 +457,7 @@
 
     .container.display-mode .scale {
       width: 196px;
-      height: clamp(360px, 50vh, 560px);
+      height: clamp(410px, 58vh, 620px);
     }
 
     .container.display-mode .track {
@@ -507,15 +508,15 @@
 
     .container.display-mode .display-cta {
       display: block;
-      margin: clamp(0.2rem, 0.9vh, 0.75rem) auto 0.05rem;
+      margin: clamp(0.08rem, 0.3vh, 0.18rem) auto 0;
       width: min(460px, 92%);
       text-align: center;
-      padding: clamp(0.45rem, 1vh, 0.68rem) 1rem clamp(0.5rem, 1vh, 0.74rem);
+      padding: clamp(0.34rem, 0.7vh, 0.5rem) 1rem clamp(0.38rem, 0.75vh, 0.56rem);
       border-radius: 20px;
       border: 2px solid rgba(178, 133, 35, 0.75);
       background: linear-gradient(180deg, #fffaf0 0%, #f3ddb0 100%);
       color: #6a4a05;
-      font-size: clamp(1.35rem, 3.9vw, 1.95rem);
+      font-size: clamp(1.3rem, 3.5vw, 1.8rem);
       font-weight: 700;
       letter-spacing: -0.01em;
       font-family: "Georgia", "Times New Roman", serif;
