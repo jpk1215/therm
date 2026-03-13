@@ -2,8 +2,15 @@ const admin = require("firebase-admin");
 
 let initialized = false;
 
+function env(name, fallbackName) {
+  const primary = process.env[name];
+  if (primary) return primary;
+  if (fallbackName) return process.env[fallbackName];
+  return undefined;
+}
+
 function getPrivateKey() {
-  return (process.env.FIREBASE_PRIVATE_KEY || "").replace(/\\n/g, "\n");
+  return (env("FIREBASE_PRIVATE_KEY", "private_key") || "").replace(/\\n/g, "\n");
 }
 
 function initFirebase() {
@@ -11,11 +18,11 @@ function initFirebase() {
 
   admin.initializeApp({
     credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      projectId: env("FIREBASE_PROJECT_ID", "project_id"),
+      clientEmail: env("FIREBASE_CLIENT_EMAIL", "client_email"),
       privateKey: getPrivateKey()
     }),
-    databaseURL: process.env.FIREBASE_DATABASE_URL
+    databaseURL: env("FIREBASE_DATABASE_URL")
   });
 
   initialized = true;
