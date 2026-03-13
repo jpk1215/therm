@@ -9,6 +9,10 @@ const { canUseTestApi, getState, resetState, setState } = require("../lib/state-
 
 const port = Number(process.env.PORT || 4173);
 const publicDir = path.join(__dirname, "..", "public");
+const injectedFaults = {
+  getState: 0,
+  setState: 0
+};
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -28,6 +32,15 @@ function sendJson(res, statusCode, payload) {
     "Cache-Control": "no-store"
   });
   res.end(JSON.stringify(payload));
+}
+
+function consumeInjectedFault(name) {
+  if (!injectedFaults[name]) {
+    return false;
+  }
+
+  injectedFaults[name] -= 1;
+  return true;
 }
 
 function readBody(req) {
@@ -92,6 +105,11 @@ function serveStatic(req, res, pathname) {
 
 async function handleApi(req, res, url) {
   if (url.pathname === "/api/state" && req.method === "GET") {
+    if (consumeInjectedFault("getState")) {
+      sendJson(res, 503, { error: "Injected test fault" });
+      return;
+    }
+
     const campaign = normalizeCampaignId(url.searchParams.get("campaign"));
     const state = await getState(campaign);
     sendJson(res, 200, state);
@@ -99,6 +117,11 @@ async function handleApi(req, res, url) {
   }
 
   if (url.pathname === "/api/state" && req.method === "POST") {
+    if (consumeInjectedFault("setState")) {
+      sendJson(res, 503, { error: "Injected test fault" });
+      return;
+    }
+
     const campaign = normalizeCampaignId(url.searchParams.get("campaign"));
     const sentToken = req.headers["x-admin-token"];
     if (!process.env.ADMIN_WRITE_TOKEN || sentToken !== process.env.ADMIN_WRITE_TOKEN) {
@@ -125,8 +148,37 @@ async function handleApi(req, res, url) {
     return;
   }
 
+  if (url.pathname === "/api/test/fault" && req.method === "POST") {
+    if (!canUseTestApi()) {
+      sendJson(res, 403, { error: "Test fault API is disabled" });
+      return;
+    }
+
+    const body = await readBody(req);
+    const target = String(body.target || "");
+    const count = Math.max(0, Number(body.count || 0));
+
+    if (!Object.hasOwn(injectedFaults, target)) {
+      sendJson(res, 400, { error: "Unknown test fault target" });
+      return;
+    }
+
+    injectedFaults[target] = count;
+    sendJson(res, 200, {
+      ok: true,
+      faults: { ...injectedFaults }
+    });
+    return;
+  }
+
   if (url.pathname === "/health") {
-    sendJson(res, 200, { ok: true });
+    sendJson(res, 200, {
+      ok: true,
+      app: "therm-dev-server",
+      stateMode: process.env.THERM_STATE_MODE || "firebase",
+      allowTestApi: canUseTestApi(),
+      adminTokenConfigured: Boolean(process.env.ADMIN_WRITE_TOKEN)
+    });
     return;
   }
 

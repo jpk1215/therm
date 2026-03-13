@@ -73,6 +73,8 @@ let lastStatusSignature = "";
 let lastSyncMetaText = "";
 let refreshTimerId = null;
 let refreshDelayMs = POLL_MS;
+let lastLiveState = normalizeState(DEFAULT_STATE);
+let holdControlErrorUntilMs = 0;
 
 if (mode === "display") {
   document.body.classList.add("display-viewport");
@@ -101,10 +103,16 @@ function readStateFromInputs() {
 
 function debounce(callback, delayMs) {
   let timerId;
-  return (...args) => {
+  const debounced = (...args) => {
     clearTimeout(timerId);
     timerId = setTimeout(() => callback(...args), delayMs);
   };
+
+  debounced.cancel = () => {
+    clearTimeout(timerId);
+  };
+
+  return debounced;
 }
 
 function getPollDelay() {
@@ -303,14 +311,24 @@ async function pushState() {
     throw new Error("Write failed");
   }
 
+  lastLiveState = normalizeState(state);
+  holdControlErrorUntilMs = 0;
   lastSuccessfulPushStateKey = stateKey;
   setStatus("Live and synced.");
   setSyncMeta(getTimestampLabel("Last control sync:"));
 }
 
+function recoverFromFailedPush() {
+  holdControlErrorUntilMs = Date.now() + 3000;
+  renderThermometer(lastLiveState, { syncInputs: false });
+  setStatus("Could not sync update. Showing last live state.", "error");
+  setSyncMeta("Update failed. Inputs are unsynced; showing the last live state.");
+  refreshDelayMs = POLL_MS;
+}
+
 const debouncedPush = debounce(() => {
   pushState().catch(() => {
-    setStatus("Could not sync update. Check token/connection.", "error");
+    recoverFromFailedPush();
   });
 }, 220);
 
@@ -339,14 +357,16 @@ if (mode === "control") {
   });
 
   maxInput.addEventListener("change", () => {
+    debouncedPush.cancel();
     pushState().catch(() => {
-      setStatus("Could not sync update. Check token/connection.", "error");
+      recoverFromFailedPush();
     });
   });
 
   currentInput.addEventListener("change", () => {
+    debouncedPush.cancel();
     pushState().catch(() => {
-      setStatus("Could not sync update. Check token/connection.", "error");
+      recoverFromFailedPush();
     });
   });
 }
@@ -366,6 +386,7 @@ async function refreshLoop() {
   try {
     const latest = await fetchState();
     const shouldSyncInputs = !(mode === "control" && (isEditing || Date.now() < suppressRemoteUntilMs));
+    lastLiveState = normalizeState(latest);
     renderThermometer(latest, { syncInputs: shouldSyncInputs });
     lastSuccessfulPushStateKey = getStateKey(latest);
     refreshDelayMs = getPollDelay();
@@ -373,8 +394,10 @@ async function refreshLoop() {
     if (mode === "display") {
       setStatus(`Display mode live. Campaign: ${campaign}`);
     } else if (adminToken) {
-      setStatus(`Control mode live. Campaign: ${campaign}`);
-      setSyncMeta(getTimestampLabel("Last live refresh:"));
+      if (Date.now() >= holdControlErrorUntilMs) {
+        setStatus(`Control mode live. Campaign: ${campaign}`);
+        setSyncMeta(getTimestampLabel("Last live refresh:"));
+      }
     } else {
       setStatus("Control mode loaded, but token is missing.", "error");
       setSyncMeta("Add a valid admin token to enable live updates.");

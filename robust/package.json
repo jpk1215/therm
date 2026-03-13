@@ -3,14 +3,28 @@
   "private": true,
   "version": "1.0.0",
   "description": "Robust hosted thermometer backend scaffold",
+  "engines": {
+    "node": ">=25.6.1 <26"
+  },
   "scripts": {
     "check": "node scripts/check.mjs",
     "dev": "node scripts/dev-server.js",
     "dev:test": "THERM_STATE_MODE=memory ALLOW_TEST_API=1 ADMIN_WRITE_TOKEN=test-admin-token node scripts/dev-server.js",
+    "setup:agent": "node scripts/setup-agent.mjs",
     "test": "npm run check && npm run test:unit",
-    "test:agent-loop": "node scripts/run-agent-loop.mjs",
-    "test:e2e": "npm run check && playwright test",
-    "test:unit": "node --test tests/unit/*.test.mjs tests/unit/*.test.cjs"
+    "test:agent-loop": "node scripts/run-agent-loop.mjs quick",
+    "test:agent-loop:full": "node scripts/run-agent-loop.mjs full",
+    "test:agent-loop:quick": "node scripts/run-agent-loop.mjs quick",
+    "test:e2e": "npm run test:smoke",
+    "test:e2e:full": "npm run test:smoke && npm run test:visual",
+    "test:e2e:grep": "playwright test",
+    "test:e2e:spec": "playwright test",
+    "test:failed": "node scripts/test-failed.mjs",
+    "test:smoke": "npm run check && playwright test",
+    "test:unit": "node scripts/run-unit-tests.mjs",
+    "test:unit:agent": "node scripts/run-unit-tests.mjs",
+    "test:unit:file": "node scripts/run-unit-tests.mjs",
+    "test:visual": "npm run check && PLAYWRIGHT_INCLUDE_VISUAL=1 playwright test --grep @visual"
   },
   "dependencies": {
     "firebase-admin": "^13.0.0"

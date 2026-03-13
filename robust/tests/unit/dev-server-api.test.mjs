@@ -40,7 +40,7 @@ async function waitForHealth(baseUrl) {
     try {
       const response = await fetch(`${baseUrl}/health`, { cache: "no-store" });
       if (response.ok) {
-        return;
+        return response.json();
       }
     } catch {
       // Retry until the server is reachable.
@@ -77,7 +77,14 @@ async function withDevServer(run) {
   const baseUrl = `http://127.0.0.1:${port}`;
 
   try {
-    await waitForHealth(baseUrl);
+    const health = await waitForHealth(baseUrl);
+    assert.deepEqual(health, {
+      ok: true,
+      app: "therm-dev-server",
+      stateMode: "memory",
+      allowTestApi: true,
+      adminTokenConfigured: true
+    });
     await run(baseUrl);
   } finally {
     if (!server.killed) {
@@ -167,6 +174,47 @@ test("dev server rejects invalid campaign IDs before touching state", async () =
     assert.equal(response.status, 400);
     assert.deepEqual(await response.json(), {
       error: "Invalid campaign ID. Use letters, numbers, hyphens, or underscores."
+    });
+  });
+});
+
+test("dev server can inject one-off state faults in test mode", async () => {
+  await withDevServer(async (baseUrl) => {
+    const faultResponse = await fetch(`${baseUrl}/api/test/fault`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        target: "getState",
+        count: 1
+      })
+    });
+
+    assert.equal(faultResponse.status, 200);
+    assert.deepEqual(await faultResponse.json(), {
+      ok: true,
+      faults: {
+        getState: 1,
+        setState: 0
+      }
+    });
+
+    const firstRead = await fetch(`${baseUrl}/api/state?campaign=fault-spec`, {
+      cache: "no-store"
+    });
+    assert.equal(firstRead.status, 503);
+    assert.deepEqual(await firstRead.json(), {
+      error: "Injected test fault"
+    });
+
+    const secondRead = await fetch(`${baseUrl}/api/state?campaign=fault-spec`, {
+      cache: "no-store"
+    });
+    assert.equal(secondRead.status, 200);
+    assert.deepEqual(await secondRead.json(), {
+      maxValue: 100000,
+      currentValue: 1250
     });
   });
 });
