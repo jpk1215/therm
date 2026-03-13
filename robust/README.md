@@ -71,3 +71,16 @@ Token handling:
 - Control mode writes with `x-admin-token` header through `/api/state`.
 
 This keeps Firebase admin credentials off the client and out of git history while still allowing remote updates from phone.
+
+## Local automation
+
+For the deterministic local test loop used by automation agents, see:
+
+- `AGENT_TESTING.md`
+
+That guide covers:
+
+- local memory-backed test mode
+- Playwright smoke tests
+- test reset/seeding
+- the repeatable run-fix-rerun workflow
