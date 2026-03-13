@@ -10,7 +10,7 @@
     "test": "npm run check && npm run test:unit",
     "test:agent-loop": "node scripts/run-agent-loop.mjs",
     "test:e2e": "npm run check && playwright test",
-    "test:unit": "node --test tests/unit/*.test.mjs"
+    "test:unit": "node --test tests/unit/*.test.mjs tests/unit/*.test.cjs"
   },
   "dependencies": {
     "firebase-admin": "^13.0.0"

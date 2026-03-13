@@ -11,6 +11,7 @@ test.describe("thermometer smoke flows", () => {
   test("display mode renders expected values from seeded state", async ({ page, request }) => {
     await resetCampaign(request, "display-smoke", {
       maxValue: 75000,
+      incrementValue: 10000,
       currentValue: 8000
     });
 
@@ -19,6 +20,7 @@ test.describe("thermometer smoke flows", () => {
     await expect(page.getByTestId("display-title")).toHaveText("Ramadan Fundraiser");
     await expect(page.getByTestId("raised-text")).toHaveText("$8,000");
     await expect(page.getByTestId("goal-text")).toHaveText("$75,000");
+    await expect(page.getByTestId("step-text")).toHaveText("$10,000");
     await expect(page.getByTestId("percent-text")).toHaveText("11%");
     await expect(page.getByTestId("tick-list").locator("li")).toHaveCount(8);
     await expect(page.getByTestId("thermometer-fill")).toHaveAttribute("aria-valuenow", "11");
@@ -27,6 +29,7 @@ test.describe("thermometer smoke flows", () => {
   test("control mode updates are reflected in display mode", async ({ browser, request }) => {
     await resetCampaign(request, "sync-smoke", {
       maxValue: 100000,
+      incrementValue: 10000,
       currentValue: 1250
     });
 
@@ -39,10 +42,12 @@ test.describe("thermometer smoke flows", () => {
 
     await controlPage.getByTestId("max-value-input").fill("120000");
     await controlPage.getByTestId("current-value-input").fill("36000");
+    await controlPage.getByTestId("increment-value-input").fill("15000");
     await controlPage.getByTestId("current-value-input").blur();
 
     await expect.poll(async () => displayPage.getByTestId("raised-text").textContent()).toBe("$36,000");
     await expect.poll(async () => displayPage.getByTestId("goal-text").textContent()).toBe("$120,000");
+    await expect.poll(async () => displayPage.getByTestId("step-text").textContent()).toBe("$15,000");
     await expect.poll(async () => displayPage.getByTestId("percent-text").textContent()).toBe("30%");
   });
 
@@ -62,6 +67,7 @@ test.describe("thermometer smoke flows", () => {
   test("control token is stored and removed from the URL", async ({ page, request }) => {
     await resetCampaign(request, "token-storage", {
       maxValue: 50000,
+      incrementValue: 5000,
       currentValue: 13000
     });
 
@@ -70,5 +76,36 @@ test.describe("thermometer smoke flows", () => {
     await expect(page).not.toHaveURL(/token=/);
     const token = await page.evaluate(() => localStorage.getItem("therm-admin-token:token-storage"));
     expect(token).toBe("test-admin-token");
+  });
+
+  test("display mode uses configured scale increment when it fits cleanly", async ({ page, request }) => {
+    await resetCampaign(request, "custom-step", {
+      maxValue: 100000,
+      incrementValue: 10000,
+      currentValue: 45000
+    });
+
+    await page.goto("/?mode=display&campaign=custom-step");
+
+    await expect(page.getByTestId("tick-list").locator("li")).toHaveCount(11);
+    await expect(page.getByTestId("tick-list")).toContainText("$90,000");
+    await expect(page.getByTestId("step-text")).toHaveText("$10,000");
+  });
+
+  test("display panel matches the approved presentation", async ({ page, request }) => {
+    await resetCampaign(request, "display-visual", {
+      maxValue: 125000,
+      incrementValue: 25000,
+      currentValue: 62500
+    });
+
+    await page.setViewportSize({ width: 1280, height: 1400 });
+    await page.goto("/?mode=display&campaign=display-visual");
+
+    await expect(page.getByTestId("display-panel")).toHaveScreenshot("display-panel.png", {
+      animations: "disabled",
+      scale: "css",
+      maxDiffPixelRatio: 0.01
+    });
   });
 });
