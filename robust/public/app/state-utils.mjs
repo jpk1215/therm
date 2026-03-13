@@ -1,5 +1,7 @@
 import { DEFAULT_STATE } from "./constants.mjs";
 
+// These browser-side helpers intentionally mirror the server normalization in
+// `lib/state-model.js` so optimistic UI state and persisted state behave alike.
 export function toPositiveNumber(value, fallback) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return fallback;

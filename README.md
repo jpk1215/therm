@@ -1,11 +1,11 @@
 # Therm
 
-Therm provides display and control interfaces for campaign state, with separate static and production deployment targets.
+Therm provides display and control interfaces for campaign fundraising state, with separate static and production deployment targets.
 
 ## Repository Structure
 
 - `index.html`: static client suitable for GitHub Pages.
-- `robust/`: production application with serverless API routes and environment-based secret management.
+- `robust/`: production application with serverless API routes, Firebase-backed persistence, and the local agent-testing harness.
 
 ## Deployment Targets
 
@@ -44,3 +44,10 @@ Follow `robust/README.md` for operational setup:
 1. Firebase project and Realtime Database provisioning
 2. Environment variable configuration
 3. Vercel project import and deploy
+
+## Local Development And Testing
+
+All local app and automation commands live under `robust/`.
+
+- App runtime and deployment details: `robust/README.md`
+- Deterministic agent/testing workflow: `robust/AGENT_TESTING.md`

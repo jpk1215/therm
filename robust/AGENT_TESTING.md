@@ -34,7 +34,7 @@ This app now supports a deterministic, agent-oriented local test loop for repeat
 ## Reliability Contract
 
 1. The local server in [`scripts/dev-server.js`](scripts/dev-server.js) serves [`public/index.html`](public/index.html) and implements `/api/state`.
-2. Agent runs force `THERM_STATE_MODE=memory`, `ALLOW_TEST_API=1`, and `ADMIN_WRITE_TOKEN=test-admin-token`.
+2. Agent-run scripts default to `THERM_STATE_MODE=memory`, `ALLOW_TEST_API=1`, and `ADMIN_WRITE_TOKEN=test-admin-token`.
 3. Playwright does not reuse an already-running server during agent runs.
 4. Smoke tests exclude visual assertions by default. Visual checks are a separate lane.
 5. E2E tests seed isolated campaign state via `POST /api/test/reset?campaign=<name>`.
@@ -94,7 +94,10 @@ Use `npm run test:agent-loop:full` when:
 ## Key Files for Future Agents
 
 - [`public/index.html`](public/index.html): shipped UI shell and selectors
-- [`public/app/main.mjs`](public/app/main.mjs): browser interaction logic and retry loop
+- [`public/styles/app.css`](public/styles/app.css): production stylesheet
+- [`public/app/main.mjs`](public/app/main.mjs): thin browser entrypoint
+- [`public/app/sync-controller.mjs`](public/app/sync-controller.mjs): polling, write sequencing, and failure recovery
+- [`public/app/render.mjs`](public/app/render.mjs): DOM rendering for stats, ticks, and fill state
 - [`scripts/dev-server.js`](scripts/dev-server.js): local server, health contract, and test-only fault injection
 - [`scripts/run-agent-loop.mjs`](scripts/run-agent-loop.mjs): structured agent runner
 - [`scripts/run-unit-tests.mjs`](scripts/run-unit-tests.mjs): unit test wrapper with file targeting

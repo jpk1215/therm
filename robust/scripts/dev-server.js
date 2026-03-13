@@ -9,6 +9,9 @@ const { canUseTestApi, getState, resetState, setState } = require("../lib/state-
 
 const port = Number(process.env.PORT || 4173);
 const publicDir = path.join(__dirname, "..", "public");
+
+// The local dev server supports one-shot fault injection so browser tests can
+// deterministically verify read/write recovery paths without mocking fetch.
 const injectedFaults = {
   getState: 0,
   setState: 0
@@ -172,6 +175,8 @@ async function handleApi(req, res, url) {
   }
 
   if (url.pathname === "/health") {
+    // The health payload doubles as a contract check for the agent harness so
+    // tests can confirm they are attached to the intended in-memory server.
     sendJson(res, 200, {
       ok: true,
       app: "therm-dev-server",

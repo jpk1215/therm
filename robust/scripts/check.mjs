@@ -1,28 +1,48 @@
-import { access } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(currentDir, "..");
-
-const filesToCheck = [
-  "api/state.js",
-  "api/test/reset.js",
-  "lib/state-model.js",
-  "lib/state-store.js",
-  "scripts/dev-server.js",
-  "public/app/constants.mjs",
-  "public/app/format.mjs",
-  "public/app/scale.mjs",
-  "public/app/state-utils.mjs",
-  "public/app/main.mjs"
+const targetDirectories = [
+  "api",
+  "lib",
+  "public/app",
+  "scripts",
+  "tests"
 ];
+const allowedExtensions = new Set([".js", ".mjs", ".cjs"]);
 
-for (const relativePath of filesToCheck) {
+async function collectCheckableFiles(targetDirectory) {
+  const absoluteDirectory = path.join(projectRoot, targetDirectory);
+  const entries = await readdir(absoluteDirectory, { withFileTypes: true });
+  const files = [];
+
+  for (const entry of entries) {
+    const entryPath = path.join(absoluteDirectory, entry.name);
+    const relativePath = path.relative(projectRoot, entryPath);
+
+    if (entry.isDirectory()) {
+      files.push(...await collectCheckableFiles(relativePath));
+      continue;
+    }
+
+    if (allowedExtensions.has(path.extname(entry.name))) {
+      files.push(relativePath);
+    }
+  }
+
+  return files;
+}
+
+const filesToCheck = [];
+for (const targetDirectory of targetDirectories) {
+  filesToCheck.push(...await collectCheckableFiles(targetDirectory));
+}
+
+for (const relativePath of filesToCheck.sort()) {
   const absolutePath = path.join(projectRoot, relativePath);
-  await access(absolutePath);
-
   const result = spawnSync(process.execPath, ["--check", absolutePath], {
     stdio: "inherit"
   });

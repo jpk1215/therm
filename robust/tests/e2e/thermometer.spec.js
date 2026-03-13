@@ -59,6 +59,50 @@ test.describe("thermometer smoke flows", () => {
     }
   });
 
+  test("control mode preserves the latest edit when writes finish out of order", async ({ browser, request }, testInfo) => {
+    const campaign = buildCampaignId(testInfo, "queued-sync");
+
+    await seedCampaign(request, campaign, {
+      maxValue: 50000,
+      currentValue: 10000
+    });
+
+    const context = await browser.newContext();
+    let delayedFirstWrite = true;
+
+    try {
+      const displayPage = await context.newPage();
+      const controlPage = await context.newPage();
+
+      await controlPage.route(new RegExp(`/api/state\\?campaign=${campaign}`), async (route, routedRequest) => {
+        if (routedRequest.method() === "POST" && delayedFirstWrite) {
+          delayedFirstWrite = false;
+          await new Promise((resolve) => setTimeout(resolve, 1200));
+        }
+
+        await route.continue();
+      });
+
+      await displayPage.goto(`/?mode=display&campaign=${campaign}`);
+      await controlPage.goto(`/?mode=control&campaign=${campaign}&token=test-admin-token`);
+
+      await controlPage.getByTestId("current-value-input").fill("12000");
+      await controlPage.getByTestId("current-value-input").blur();
+      await controlPage.getByTestId("max-value-input").fill("60000");
+      await controlPage.getByTestId("current-value-input").fill("33000");
+      await controlPage.getByTestId("current-value-input").blur();
+
+      await expect.poll(async () => controlPage.getByTestId("raised-text").textContent(), { timeout: 9000 }).toBe("$33,000");
+      await expect.poll(async () => controlPage.getByTestId("goal-text").textContent(), { timeout: 9000 }).toBe("$60,000");
+      await expect.poll(async () => controlPage.getByTestId("percent-text").textContent(), { timeout: 9000 }).toBe("55%");
+      await expect.poll(async () => displayPage.getByTestId("raised-text").textContent(), { timeout: 9000 }).toBe("$33,000");
+      await expect.poll(async () => displayPage.getByTestId("goal-text").textContent(), { timeout: 9000 }).toBe("$60,000");
+      await expect.poll(async () => displayPage.getByTestId("percent-text").textContent(), { timeout: 9000 }).toBe("55%");
+    } finally {
+      await context.close();
+    }
+  });
+
   test("control mode surfaces missing token errors", async ({ page, request }, testInfo) => {
     const campaign = buildCampaignId(testInfo, "missing-token");
 
