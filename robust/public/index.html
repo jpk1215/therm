@@ -29,6 +29,9 @@
     body.display-viewport {
       height: 100vh;
       overflow: hidden;
+      display: grid;
+      place-items: center;
+      padding: 0.25rem;
       background: radial-gradient(circle at 50% 18%, #fffdfa 0%, #f9f1df 55%, #efe2c6 100%);
     }
 
@@ -44,6 +47,14 @@
     .container.control-mode {
       grid-template-columns: minmax(320px, 380px) 1fr;
       align-items: center;
+    }
+
+    .container.display-mode {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      display: grid;
+      place-items: center;
     }
 
     .controls {
@@ -105,6 +116,7 @@
     .display {
       position: relative;
       width: min(900px, 100%);
+      max-width: 100%;
       margin: 0 auto;
       aspect-ratio: 5 / 8;
       overflow: hidden;
@@ -114,6 +126,13 @@
         radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.72), rgba(247, 236, 212, 0.45) 56%, rgba(235, 218, 178, 0.35) 100%),
         linear-gradient(180deg, #fffdf8 0%, #f7ebd2 100%);
       isolation: isolate;
+    }
+
+    .container.display-mode .display {
+      width: min(
+        calc((100vh - 0.9rem) * 0.625),
+        calc(100vw - 0.9rem)
+      );
     }
 
     .display::after {
@@ -161,11 +180,17 @@
       font-size: clamp(1.9rem, 4.6vw, 4rem);
       line-height: 1.02;
       font-weight: 700;
-      background: linear-gradient(180deg, #3b2a10 0%, #7b5113 34%, #c4963f 65%, #6b4712 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      color: #6f4a12;
       text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72), 0 3px 14px rgba(108, 72, 18, 0.22);
+    }
+
+    @supports (-webkit-background-clip: text) {
+      .title {
+        background: linear-gradient(180deg, #3b2a10 0%, #7b5113 34%, #c4963f 65%, #6b4712 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
     }
 
     .divider { width: 34%; left: 33%; top: 18.2%; opacity: 0.86; }
@@ -480,6 +505,7 @@
     if (mode === "display") {
       document.body.classList.add("display-viewport");
       controlsEl.classList.add("hidden");
+      containerEl.classList.add("display-mode");
     } else {
       containerEl.classList.add("control-mode");
       subtitleEl.textContent = "Control mode is active. Updates are synced to the live display.";
