@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fundraising Thermometer</title>
+  <style>
+    :root {
+      --bg: #ecf7f0;
+      --card: #ffffff;
+      --text: #08371e;
+      --muted: #3f5d4b;
+      --primary: #01411c;
+      --track: #d9e8de;
+      --tick: #5f7d6b;
+      --border: #c9ddd0;
+      --shadow: 0 8px 24px rgba(1, 65, 28, 0.12);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #ffffff, var(--bg));
+    }
+
+    .container {
+      width: min(980px, 100% - 2rem);
+      margin: 1.25rem auto 2rem;
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      padding: 1.1rem;
+    }
+
+    h1 {
+      margin: 0 0 0.4rem;
+      font-size: 1.35rem;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .field {
+      margin-bottom: 0.9rem;
+    }
+
+    label {
+      display: inline-block;
+      margin-bottom: 0.35rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.68rem 0.72rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      color: var(--text);
+      background: #fff;
+    }
+
+    input[type="number"]:focus {
+      outline: 2px solid #bfdbfe;
+      border-color: #93c5fd;
+    }
+
+    .status {
+      margin-top: 0.6rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .status strong {
+      color: var(--text);
+    }
+
+    .display {
+      padding: 1.1rem;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .display::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 18px;
+      background: linear-gradient(180deg, #036a2f, var(--primary));
+    }
+
+    .display::after {
+      content: "☪ ★";
+      position: absolute;
+      top: 0.65rem;
+      right: 0.9rem;
+      font-size: 0.95rem;
+      color: rgba(1, 65, 28, 0.7);
+      letter-spacing: 0.08rem;
+    }
+
+    .amounts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem 1.2rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.95rem;
+    }
+
+    .amounts .value {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .thermometer-wrap {
+      flex: 1;
+      min-height: 390px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 0.5rem 0.2rem 0.2rem;
+    }
+
+    .thermometer {
+      position: relative;
+      width: min(370px, 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.85rem;
+    }
+
+    .scale {
+      position: relative;
+      height: clamp(260px, 50vh, 460px);
+      width: 130px;
+    }
+
+    .track {
+      position: absolute;
+      right: 0;
+      bottom: 46px;
+      width: 52px;
+      height: calc(100% - 56px);
+      background: var(--track);
+      border-radius: 999px;
+      border: 1px solid #d7dce6;
+      overflow: hidden;
+    }
+
+    .fill {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 0;
+      background: linear-gradient(180deg, #11a04a, var(--primary));
+      border-top: 2px solid rgba(255, 255, 255, 0.35);
+      transition: height 250ms ease;
+    }
+
+    .bulb {
+      position: absolute;
+      right: -8px;
+      bottom: 0;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 1px solid #013017;
+      box-shadow: inset 0 -5px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .tick-list {
+      position: absolute;
+      left: 0;
+      right: 64px;
+      bottom: 56px;
+      height: calc(100% - 66px);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tick-list li {
+      position: absolute;
+      left: 0;
+      transform: translateY(50%);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+      color: var(--tick);
+      font-size: 0.82rem;
+      line-height: 1;
+    }
+
+    .tick-mark {
+      width: 22px;
+      height: 1px;
+      background: var(--tick);
+    }
+
+    @media (max-width: 780px) {
+      .container {
+        grid-template-columns: 1fr;
+        width: min(620px, 100% - 1rem);
+      }
+
+      .display {
+        min-height: 430px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .controls,
+      .display {
+        padding: 0.85rem;
+      }
+
+      h1 {
+        font-size: 1.2rem;
+      }
+
+      .display::before {
+        width: 14px;
+      }
+
+      .scale {
+        width: 112px;
+      }
+
+      .track {
+        width: 46px;
+      }
+
+      .bulb {
+        width: 62px;
+        height: 62px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="card controls">
+      <h1>Fundraising Thermometer</h1>
+      <p class="subtitle">Set your goal, increment spacing, and current amount.</p>
+
+      <div class="field">
+        <label for="maxValue">Goal / Max Value</label>
+        <input id="maxValue" type="number" min="1" step="1" value="100000">
+      </div>
+
+      <div class="field">
+        <label for="incrementValue">Increment</label>
+        <input id="incrementValue" type="number" min="1" step="1" value="10000">
+      </div>
+
+      <div class="field">
+        <label for="currentValue">Current Value</label>
+        <input id="currentValue" type="number" min="0" step="1" value="1250">
+      </div>
+
+      <p class="status"><strong>Tip:</strong> values update smoothly as you type.</p>
+    </section>
+
+    <section class="card display" aria-live="polite">
+      <div class="amounts">
+        <div><span>Raised:</span> <span class="value" id="raisedText">$0</span></div>
+        <div><span>Goal:</span> <span class="value" id="goalText">$0</span></div>
+        <div><span>Progress:</span> <span class="value" id="percentText">0%</span></div>
+      </div>
+
+      <div class="thermometer-wrap">
+        <div class="thermometer">
+          <div class="scale">
+            <ul class="tick-list" id="tickList"></ul>
+            <div class="track">
+              <div class="fill" id="fill"></div>
+            </div>
+            <div class="bulb"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const maxInput = document.getElementById("maxValue");
+    const incrementInput = document.getElementById("incrementValue");
+    const currentInput = document.getElementById("currentValue");
+
+    const fillEl = document.getElementById("fill");
+    const tickListEl = document.getElementById("tickList");
+    const raisedTextEl = document.getElementById("raisedText");
+    const goalTextEl = document.getElementById("goalText");
+    const percentTextEl = document.getElementById("percentText");
+
+    function toPositiveNumber(value, fallback) {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed)) {
+        return fallback;
+      }
+      return parsed > 0 ? parsed : fallback;
+    }
+
+    function toNonNegativeNumber(value, fallback) {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed)) {
+        return fallback;
+      }
+      return parsed >= 0 ? parsed : fallback;
+    }
+
+    function formatMoney(value) {
+      return new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function debounce(callback, delayMs) {
+      let timerId;
+      return (...args) => {
+        clearTimeout(timerId);
+        timerId = setTimeout(() => {
+          callback(...args);
+        }, delayMs);
+      };
+    }
+
+    function createTicks(maxValue, incrementValue) {
+      tickListEl.innerHTML = "";
+      const totalTicks = Math.max(1, Math.ceil(maxValue / incrementValue));
+
+      for (let i = 0; i <= totalTicks; i += 1) {
+        const raw = i * incrementValue;
+        const tickValue = raw > maxValue ? maxValue : raw;
+        const positionPercent = (tickValue / maxValue) * 100;
+
+        const li = document.createElement("li");
+        li.style.bottom = positionPercent + "%";
+
+        const mark = document.createElement("span");
+        mark.className = "tick-mark";
+
+        const label = document.createElement("span");
+        label.textContent = formatMoney(tickValue);
+
+        li.appendChild(mark);
+        li.appendChild(label);
+        tickListEl.appendChild(li);
+
+        if (tickValue >= maxValue) {
+          break;
+        }
+      }
+    }
+
+    function updateThermometer() {
+      const maxValue = toPositiveNumber(maxInput.value, 1);
+      const incrementValue = toPositiveNumber(incrementInput.value, 1);
+      const currentValueRaw = toNonNegativeNumber(currentInput.value, 0);
+      const currentValue = Math.min(currentValueRaw, maxValue);
+
+      if (currentValueRaw !== currentValue) {
+        currentInput.value = String(currentValue);
+      }
+      if (Number(maxInput.value) !== maxValue) {
+        maxInput.value = String(maxValue);
+      }
+      if (Number(incrementInput.value) !== incrementValue) {
+        incrementInput.value = String(incrementValue);
+      }
+
+      const percent = (currentValue / maxValue) * 100;
+      fillEl.style.height = percent + "%";
+
+      raisedTextEl.textContent = formatMoney(currentValue);
+      goalTextEl.textContent = formatMoney(maxValue);
+      percentTextEl.textContent = Math.round(percent) + "%";
+
+      createTicks(maxValue, incrementValue);
+    }
+
+    const debouncedUpdateThermometer = debounce(updateThermometer, 180);
+
+    maxInput.addEventListener("input", debouncedUpdateThermometer);
+    incrementInput.addEventListener("input", debouncedUpdateThermometer);
+    currentInput.addEventListener("input", debouncedUpdateThermometer);
+
+    maxInput.addEventListener("change", updateThermometer);
+    incrementInput.addEventListener("change", updateThermometer);
+    currentInput.addEventListener("change", updateThermometer);
+
+    updateThermometer();
+  </script>
+</body>
+</html>
