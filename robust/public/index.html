@@ -760,7 +760,21 @@
       for (let v = step; v < maxValue; v += step) {
         values.push(v);
       }
-      values.push(maxValue);
+
+      const lastValue = values[values.length - 1];
+      const remainder = maxValue - lastValue;
+
+      // Avoid cramped top labels like 70k and 75k.
+      if (remainder === 0) {
+        return values;
+      }
+
+      if (remainder < step * 0.65 && values.length > 1) {
+        values[values.length - 1] = maxValue;
+      } else {
+        values.push(maxValue);
+      }
+
       return values;
     }
 
