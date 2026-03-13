@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Robust hosted thermometer backend scaffold",
   "engines": {
-    "node": ">=25.6.1 <26"
+    "node": "24.x"
   },
   "scripts": {
     "check": "node scripts/check.mjs",
