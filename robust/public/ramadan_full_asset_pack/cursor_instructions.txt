@@ -1,0 +1,76 @@
+Build a premium Ramadan fundraiser thermometer component that matches a luxury event-screen aesthetic and uses the SVG assets in /assets/ramadan/.
+
+Goal:
+- Looks like a high-end mosque gala / multi-million-dollar fundraiser
+- Projector-safe and high-contrast
+- Mostly ivory/white background with deep gold ornamental framing and emerald thermometer fill
+- Pakistani / Mughal-inspired visual language without using the flag
+- Clean, premium, symmetrical, and legible from the back of a hall
+
+Technical requirements:
+- Use React + CSS modules or Tailwind
+- Build one main component called RamadanFundraiserThermometer
+- Use a fixed artboard ratio close to 1000x1600
+- Import and layer the SVG assets rather than trying to redraw them in CSS
+- All numbers and labels must remain editable text in code
+- Thermometer fill must be dynamic based on currentAmount / goalAmount
+- Current amount plaque should be on the right
+- Milestones should be on the left
+- CTA plaque centered at bottom
+- Decorative lanterns should hang near top left and top right
+- Mosque skyline should sit in the lower-right background at low opacity
+- Use subtle glow/shadow/gradient treatments for a luxury finish, but keep text crisp
+
+Assets to use:
+- arch-frame-ornate.svg as outer structure
+- islamic-border-pattern.svg as repeatable trim if needed
+- crescent-topper.svg above the thermometer
+- lantern-large-a.svg and lantern-large-b.svg near the upper corners
+- lantern-small.svg near lower corners if needed
+- thermometer-shell.svg as the glass housing
+- thermometer-fill-mask.svg as the clipping shape for the fill
+- thermometer-bulb.svg below the tube
+- bulb-cradle.svg under the bulb
+- flourish-left.svg and flourish-right.svg around the bulb area
+- amount-plaque-frame.svg behind the current amount
+- cta-plaque.svg behind the CTA
+- milestone-line.svg behind each milestone row
+- ornament-divider-small.svg for small separators
+- mosque-skyline.svg in the lower-right background
+- corner-floral-left.svg and corner-floral-right.svg near the bottom corners
+- sparkle-4pt.svg, sparkle-8pt.svg, sparkle-dot.svg very sparingly
+- ivory-speckle-overlay.svg as a subtle texture layer
+
+Data model:
+- props:
+  - title
+  - currentAmount
+  - goalAmount
+  - milestones (array of numbers)
+  - ctaText
+- default example:
+  title = "Ramadan Fundraiser"
+  currentAmount = 1750000
+  goalAmount = 3000000
+  milestones = [3000000, 2500000, 2000000, 1500000, 1000000]
+  ctaText = "Donate Generously"
+
+Implementation notes:
+- Format numbers as currency with commas and no cents
+- Compute fillPercent = clamp(currentAmount / goalAmount, 0, 1)
+- Render an absolutely-positioned emerald gradient fill behind thermometer-shell.svg and clip it to thermometer-fill-mask.svg
+- Bulb should also have a fill/glow effect synchronized with the same emerald palette
+- Text:
+  - title: elegant serif or display font
+  - numbers: bold sans-serif for legibility
+- Make projector readability a priority:
+  - strong contrast
+  - large numerals
+  - no tiny details carrying essential information
+- Keep the background mostly light/ivory, not dark
+
+Deliverables:
+1. React component
+2. Styling file
+3. Helper function for money formatting
+4. Brief comments in code explaining the asset layering

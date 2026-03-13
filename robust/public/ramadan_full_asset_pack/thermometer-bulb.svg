@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320">
+  <defs>
+    <radialGradient id="bulbG" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#22C55E"/>
+      <stop offset="60%" stop-color="#16A34A"/>
+      <stop offset="100%" stop-color="#0F6B31"/>
+    </radialGradient>
+  </defs>
+  <circle cx="160" cy="160" r="116" fill="url(#bulbG)" stroke="#CFA74A" stroke-width="16"/>
+  <circle cx="132" cy="126" r="34" fill="#fff" opacity="0.22"/>
+</svg>

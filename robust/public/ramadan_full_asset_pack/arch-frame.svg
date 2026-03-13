@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1600">
+  <defs>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F4D27A"/>
+      <stop offset="50%" stop-color="#CFA74A"/>
+      <stop offset="100%" stop-color="#8A6A22"/>
+    </linearGradient>
+  </defs>
+  <path d="M110 1480 L110 510 Q500 95 890 510 L890 1480 Z" fill="#FAF7F0" stroke="url(#goldGrad)" stroke-width="44"/>
+  <path d="M165 1435 L165 550 Q500 195 835 550 L835 1435 Z" fill="none" stroke="#CFA74A" stroke-width="14"/>
+</svg>

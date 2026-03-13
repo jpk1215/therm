@@ -1,1 +1,7 @@
 .vercel
+
+# macOS / Finder metadata
+.DS_Store
+
+# Editor metadata
+.vscode/

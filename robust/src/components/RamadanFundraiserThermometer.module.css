@@ -1,0 +1,329 @@
+.artboard {
+  position: relative;
+  width: min(1000px, 100%);
+  aspect-ratio: 5 / 8;
+  margin: 0 auto;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fffdf7 0%, #f7efdb 100%);
+  border-radius: 28px;
+  box-shadow: 0 22px 56px rgba(95, 69, 22, 0.24);
+}
+
+.asset {
+  position: absolute;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.texture {
+  inset: 0;
+  opacity: 0.28;
+}
+
+.skyline {
+  width: 56%;
+  right: 8%;
+  bottom: 16%;
+  opacity: 0.22;
+}
+
+.archFrame {
+  inset: 0;
+}
+
+.trimPattern {
+  width: 82%;
+  left: 9%;
+  top: 8.8%;
+  opacity: 0.18;
+}
+
+.topLanternLeft {
+  width: 13%;
+  left: 7%;
+  top: 1.6%;
+}
+
+.topLanternRight {
+  width: 13%;
+  right: 7%;
+  top: 1.8%;
+}
+
+.smallLanternLeft {
+  width: 8.4%;
+  left: 6.5%;
+  bottom: 6%;
+  opacity: 0.88;
+}
+
+.smallLanternRight {
+  width: 8.4%;
+  right: 6.5%;
+  bottom: 6%;
+  opacity: 0.88;
+}
+
+.titleWrap {
+  position: absolute;
+  top: 9.9%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-family: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+  font-size: clamp(2rem, 4.8vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #7d5410;
+  text-shadow:
+    0 1px 0 #fffaf0,
+    0 4px 12px rgba(117, 81, 20, 0.2);
+}
+
+.topDivider {
+  width: 35%;
+  top: 17.4%;
+  left: 32.5%;
+  opacity: 0.86;
+}
+
+.crescent {
+  width: 12%;
+  left: 44%;
+  top: 18.6%;
+}
+
+.milestonePanel {
+  position: absolute;
+  top: 26%;
+  left: 11%;
+  width: 34%;
+}
+
+.milestoneRow {
+  position: relative;
+  height: clamp(42px, 4.2vw, 66px);
+  margin-bottom: clamp(6px, 0.75vw, 12px);
+}
+
+.milestoneLine {
+  width: 100%;
+  inset: 0;
+  object-fit: contain;
+}
+
+.milestoneValue {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center start;
+  padding-left: 8%;
+  font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1rem, 2.4vw, 2rem);
+  color: #1f1a0e;
+  letter-spacing: 0.01em;
+}
+
+.goalLabel {
+  margin-top: clamp(8px, 1vw, 16px);
+  text-align: left;
+  padding-left: 8%;
+  font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(1.3rem, 2.7vw, 2.2rem);
+  font-weight: 900;
+  color: #2f2412;
+}
+
+.amountPlaque {
+  position: absolute;
+  width: 36%;
+  right: 10%;
+  top: 31%;
+}
+
+.amountPanel {
+  width: 100%;
+}
+
+.amountFrame {
+  width: 100%;
+}
+
+.amountPlaqueText {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  line-height: 1.08;
+}
+
+.amountLabel {
+  display: block;
+  margin-bottom: clamp(2px, 0.4vw, 8px);
+  font-family: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+  font-size: clamp(1rem, 2vw, 1.8rem);
+  font-weight: 700;
+  color: #4b3713;
+}
+
+.amountValue {
+  display: block;
+  font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(1.4rem, 3.6vw, 3.1rem);
+  font-weight: 900;
+  color: #1a160d;
+  letter-spacing: 0.01em;
+}
+
+.thermometerArea {
+  position: absolute;
+  width: 26%;
+  left: 37%;
+  top: 22%;
+  height: 57%;
+}
+
+.fillClip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 17%;
+  -webkit-mask-image: url("/ramadan_full_asset_pack/thermometer-fill-mask.svg");
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center top;
+  mask-image: url("/ramadan_full_asset_pack/thermometer-fill-mask.svg");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center top;
+}
+
+.tubeFill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 60% 18%, rgba(170, 255, 184, 0.56), transparent 42%),
+    linear-gradient(180deg, #53e37d 0%, #18af53 46%, #0b7a39 100%);
+  box-shadow:
+    inset 0 0 24px rgba(10, 130, 55, 0.46),
+    0 0 26px rgba(32, 177, 77, 0.36);
+  transition: height 420ms ease;
+}
+
+.tubeShell {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+.bulbFill {
+  position: absolute;
+  width: 42%;
+  aspect-ratio: 1 / 1;
+  left: 29%;
+  bottom: 8.8%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(204, 255, 196, 0.88), rgba(94, 231, 118, 0.6) 34%, rgba(21, 146, 61, 0.82) 66%, rgba(8, 90, 38, 0.95) 100%);
+  box-shadow:
+    inset 0 -10px 20px rgba(4, 67, 27, 0.5),
+    0 0 34px rgba(63, 194, 92, 0.45);
+}
+
+.bulbAsset {
+  position: absolute;
+  width: 55%;
+  left: 22.5%;
+  bottom: 2%;
+}
+
+.bulbCradle {
+  position: absolute;
+  width: 74%;
+  left: 13%;
+  bottom: -3.2%;
+}
+
+.flourishLeft {
+  width: 11%;
+  left: 29%;
+  bottom: 19%;
+}
+
+.flourishRight {
+  width: 11%;
+  right: 29%;
+  bottom: 19%;
+}
+
+.ctaWrap {
+  position: absolute;
+  left: 23%;
+  bottom: 4%;
+  width: 54%;
+}
+
+.ctaPlaque {
+  width: 100%;
+}
+
+.ctaText {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-family: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+  font-size: clamp(1.7rem, 4vw, 3.4rem);
+  font-weight: 700;
+  color: #3e2c0e;
+  letter-spacing: 0.01em;
+}
+
+.cornerLeft {
+  width: 15%;
+  left: 8%;
+  bottom: 4.8%;
+  opacity: 0.95;
+}
+
+.cornerRight {
+  width: 15%;
+  right: 8%;
+  bottom: 4.8%;
+  opacity: 0.95;
+}
+
+.sparkleA {
+  width: 3.1%;
+  right: 27%;
+  top: 12.8%;
+  opacity: 0.65;
+}
+
+.sparkleB {
+  width: 2.5%;
+  left: 24%;
+  top: 15.2%;
+  opacity: 0.48;
+}
+
+.sparkleDot {
+  width: 1.3%;
+  left: 60%;
+  top: 13.8%;
+  opacity: 0.5;
+}

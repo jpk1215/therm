@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420">
+  <path d="M0 420 H1000 V380 H0 Z" fill="#CFA74A"/>
+  <g fill="#CFA74A" opacity="0.95">
+    <rect x="60" y="240" width="90" height="140"/>
+    <circle cx="105" cy="240" r="44"/>
+    <rect x="172" y="180" width="34" height="200"/>
+    <polygon points="189,118 176,180 202,180"/>
+    <rect x="250" y="270" width="110" height="110"/>
+    <circle cx="305" cy="270" r="52"/>
+    <rect x="406" y="214" width="156" height="166"/>
+    <circle cx="484" cy="214" r="76"/>
+    <rect x="610" y="162" width="46" height="218"/>
+    <polygon points="633,102 616,162 650,162"/>
+    <rect x="702" y="246" width="124" height="134"/>
+    <circle cx="764" cy="246" r="56"/>
+    <rect x="856" y="200" width="28" height="180"/>
+    <polygon points="870,148 860,200 880,200"/>
+  </g>
+</svg>

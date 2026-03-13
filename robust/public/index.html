@@ -6,640 +6,418 @@
   <title>Fundraising Thermometer</title>
   <style>
     :root {
-      --bg: #ecf7f0;
-      --card: #ffffff;
-      --text: #08371e;
-      --muted: #3f5d4b;
-      --primary: #01411c;
-      --primary-deep: #022d16;
-      --gold: #d8b463;
-      --gold-soft: #f4e4bc;
-      --track: #d9e8de;
-      --tick: #5f7d6b;
-      --border: #c9ddd0;
-      --shadow: 0 16px 40px rgba(1, 65, 28, 0.12);
-      --radius: 18px;
+      --bg-ivory: #fbf7ec;
+      --bg-ivory-deep: #f2e7cc;
+      --gold-deep: #8d6522;
+      --gold-mid: #cda14d;
+      --emerald-900: #0c6f35;
+      --emerald-500: #28b15c;
+      --ink: #1f180a;
+      --soft-shadow: 0 18px 42px rgba(95, 68, 20, 0.22);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-      color: var(--text);
-      background: linear-gradient(180deg, #ffffff, var(--bg));
+      font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #fffdf7, var(--bg-ivory));
     }
 
     body.display-viewport {
       height: 100vh;
       overflow: hidden;
-      background: radial-gradient(circle at 50% 10%, #f9efcf, #efe0b8 62%, #e8d7aa 100%);
+      background: radial-gradient(circle at 50% 18%, #fffdfa 0%, #f9f1df 55%, #efe2c6 100%);
     }
 
     .container {
-      width: min(1080px, 100% - 2.5rem);
-      margin: 2rem auto 3rem;
+      width: min(1300px, calc(100% - 2rem));
+      margin: 1rem auto;
       display: grid;
-      grid-template-columns: minmax(300px, 380px) 1fr;
-      gap: 1.5rem;
+      gap: 1.25rem;
+      grid-template-columns: 1fr;
       align-items: start;
     }
 
-    .container.display-mode {
-      grid-template-columns: 1fr;
-      width: min(860px, 100% - 1rem);
-      height: 100vh;
-      margin: 0 auto;
-      padding: 0.4rem 0;
-      align-items: stretch;
-    }
-
     .container.control-mode {
-      grid-template-columns: minmax(320px, 380px) minmax(520px, 1fr);
-      width: min(1080px, 100% - 2rem);
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      grid-template-columns: minmax(320px, 380px) 1fr;
+      align-items: center;
     }
 
     .controls {
-      padding: 1.6rem;
+      background: #fff;
+      border: 1px solid #e7dbc3;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(71, 50, 13, 0.1);
+      padding: 1.25rem;
     }
 
-    .controls.hidden {
-      display: none;
-    }
+    .controls.hidden { display: none; }
 
     h1 {
-      margin: 0 0 0.5rem;
-      font-size: 1.6rem;
-      line-height: 1.15;
-      letter-spacing: -0.01em;
+      margin: 0 0 0.45rem;
+      font-size: 1.5rem;
+      font-weight: 800;
     }
 
     .subtitle {
-      margin: 0 0 1.35rem;
-      color: var(--muted);
-      font-size: 1rem;
+      margin: 0 0 1rem;
+      color: #584930;
+      font-size: 0.95rem;
     }
 
-    .field {
-      margin-bottom: 1.05rem;
-    }
+    .field { margin-bottom: 0.9rem; }
 
     label {
       display: inline-block;
-      margin-bottom: 0.45rem;
-      font-size: 0.93rem;
-      font-weight: 600;
+      margin-bottom: 0.36rem;
+      font-weight: 700;
+      font-size: 0.88rem;
     }
 
     input[type="number"] {
       width: 100%;
-      padding: 0.82rem 0.9rem;
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
+      border: 1.5px solid #dcc8a1;
+      border-radius: 10px;
+      padding: 0.7rem 0.75rem;
       font-size: 1rem;
-      color: var(--text);
-      background: #fff;
-      transition: border-color 150ms ease, box-shadow 150ms ease;
+      color: #231b0d;
     }
 
     input[type="number"]:focus {
       outline: none;
-      border-color: #0b6f35;
-      box-shadow: 0 0 0 4px rgba(11, 111, 53, 0.12);
+      border-color: var(--gold-mid);
+      box-shadow: 0 0 0 3px rgba(205, 161, 77, 0.2);
     }
 
     .status {
-      margin-top: 1.15rem;
-      margin-bottom: 0;
-      padding: 0.75rem 0.85rem;
-      background: #f3faf5;
-      border: 1px solid #d7e9dc;
-      border-radius: 12px;
-      font-size: 0.92rem;
-      color: var(--muted);
-    }
-
-    .status strong {
-      color: var(--text);
+      margin: 1rem 0 0;
+      border-radius: 10px;
+      border: 1px solid #e2d5bc;
+      background: #fffaf0;
+      color: #5e4a20;
+      padding: 0.65rem 0.75rem;
+      font-size: 0.9rem;
     }
 
     .display {
-      padding: 1.6rem 1.6rem 1.4rem 2.2rem;
-      min-height: 580px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
       position: relative;
+      width: min(860px, 100%);
+      margin: 0 auto;
+      aspect-ratio: 5 / 8;
       overflow: hidden;
+      border-radius: 20px;
+      box-shadow: var(--soft-shadow);
+      background: linear-gradient(180deg, #fffdf7 0%, #f8eddb 100%);
+      isolation: isolate;
     }
 
-    .display::before {
-      content: "";
+    .asset {
       position: absolute;
-      top: 0;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    .texture { inset: 0; opacity: 0.27; }
+    .skyline { width: 54%; right: 8%; bottom: 17%; opacity: 0.25; }
+    .arch { inset: 0; }
+    .trim { width: 80%; left: 10%; top: 8.8%; opacity: 0.17; }
+
+    .lanternA { width: 13%; left: 7%; top: 1.8%; }
+    .lanternB { width: 13%; right: 7%; top: 1.8%; }
+    .lanternSmallL { width: 8.1%; left: 6.8%; bottom: 6.2%; opacity: 0.9; }
+    .lanternSmallR { width: 8.1%; right: 6.8%; bottom: 6.2%; opacity: 0.9; }
+
+    .title-wrap {
+      position: absolute;
+      top: 10%;
       left: 0;
-      bottom: 0;
-      width: 24px;
-      background: linear-gradient(180deg, #036a2f, var(--primary));
+      width: 100%;
+      text-align: center;
     }
 
-    .display::after {
-      content: "☪ ★";
-      position: absolute;
-      top: 0.9rem;
-      right: 1rem;
-      font-size: 1.05rem;
-      color: rgba(1, 65, 28, 0.7);
-      letter-spacing: 0.08rem;
-    }
-
-    .festival-header {
-      display: none;
-    }
-
-    .arch-frame {
-      display: contents;
-    }
-
-    .display-cta {
-      display: none;
-    }
-
-    .amounts {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem 0.95rem;
-      margin-bottom: 1.2rem;
-      font-size: 0.95rem;
-    }
-
-    .amounts > div {
-      padding: 0.7rem 0.82rem;
-      border: 1px solid #d8e8dd;
-      border-radius: 12px;
-      background: #f8fcf9;
-      min-width: 138px;
-    }
-
-    .amounts > div span:first-child {
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    .amounts .value {
-      font-size: 1.24rem;
+    .title {
+      margin: 0;
+      font-family: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4.6vw, 4rem);
+      line-height: 1.02;
       font-weight: 700;
-      color: var(--text);
+      color: #7a4f0f;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 3px 14px rgba(108, 72, 18, 0.2);
     }
 
-    .thermometer-wrap {
-      flex: 1;
-      min-height: 390px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      padding: 1rem 0.8rem 0.4rem;
-    }
+    .divider { width: 34%; left: 33%; top: 17.4%; opacity: 0.88; }
+    .crescent { width: 11.5%; left: 44.25%; top: 18.5%; }
 
-    .thermometer {
-      position: relative;
-      width: min(420px, 100%);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: 1rem;
-    }
-
-    .scale {
-      position: relative;
-      height: clamp(300px, 52vh, 500px);
-      width: 146px;
-    }
-
-    .track {
+    .milestones {
       position: absolute;
-      right: 0;
-      bottom: 46px;
-      width: 58px;
-      height: calc(100% - 56px);
-      background: var(--track);
-      border-radius: 999px;
-      border: 1px solid #cadecf;
-      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
-      overflow: hidden;
+      top: 26%;
+      left: 11%;
+      width: 34%;
     }
 
-    .fill {
+    .milestone-row {
+      position: relative;
+      height: clamp(40px, 4.1vw, 64px);
+      margin-bottom: clamp(6px, 0.72vw, 11px);
+    }
+
+    .milestone-row img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .milestone-value {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center start;
+      padding-left: 8%;
+      font-size: clamp(1rem, 2.3vw, 2rem);
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      color: #1d1609;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+
+    .goal-label {
+      margin-top: clamp(8px, 1vw, 15px);
+      padding-left: 8%;
+      font-size: clamp(1.3rem, 2.6vw, 2.2rem);
+      font-weight: 900;
+      color: #2f2412;
+    }
+
+    .amount-plaque {
+      position: absolute;
+      width: 36%;
+      right: 10%;
+      top: 31%;
+    }
+
+    .amount-plaque .panel { width: 100%; display: block; }
+    .amount-plaque .frame { width: 100%; inset: 0; }
+
+    .amount-text {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      line-height: 1.05;
+    }
+
+    .amount-text .label {
+      display: block;
+      font-family: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+      font-size: clamp(0.95rem, 2vw, 1.8rem);
+      font-weight: 700;
+      color: #4a3612;
+    }
+
+    .amount-text .value {
+      display: block;
+      font-size: clamp(1.35rem, 3.4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      color: #1c160d;
+    }
+
+    .thermo-area {
+      position: absolute;
+      width: 26%;
+      left: 37%;
+      top: 22%;
+      height: 57%;
+    }
+
+    .fill-clip {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 17%;
+      -webkit-mask-image: url("/ramadan_full_asset_pack/thermometer-fill-mask.svg");
+      -webkit-mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center top;
+      mask-image: url("/ramadan_full_asset_pack/thermometer-fill-mask.svg");
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center top;
+    }
+
+    .tube-fill {
       position: absolute;
       left: 0;
       right: 0;
       bottom: 0;
       height: 0;
-      background: linear-gradient(180deg, #11a04a, var(--primary));
-      border-top: 2px solid rgba(255, 255, 255, 0.35);
-      transition: height 250ms ease;
-    }
-
-    .bulb {
-      position: absolute;
-      right: -9px;
-      bottom: 0;
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
-      background: var(--primary);
-      border: 1px solid #013017;
-      box-shadow: inset 0 -6px 10px rgba(0, 0, 0, 0.16);
-    }
-
-    .tick-list {
-      position: absolute;
-      left: 0;
-      right: 70px;
-      bottom: 56px;
-      height: calc(100% - 66px);
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .tick-list li {
-      position: absolute;
-      left: 0;
-      transform: translateY(50%);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      white-space: nowrap;
-      color: var(--tick);
-      font-size: 0.86rem;
-      font-weight: 600;
-      line-height: 1;
-    }
-
-    .tick-mark {
-      width: 24px;
-      height: 2px;
-      background: var(--tick);
-    }
-
-    @media (max-width: 780px) {
-      .container {
-        grid-template-columns: 1fr;
-        width: min(700px, 100% - 1.25rem);
-      }
-
-      .display {
-        min-height: 500px;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .container.control-mode {
-        grid-template-columns: 1fr;
-        width: min(700px, 100% - 1.25rem);
-      }
-    }
-
-    @media (max-width: 430px) {
-      .controls,
-      .display {
-        padding: 1rem;
-      }
-
-      h1 {
-        font-size: 1.32rem;
-      }
-
-      .display::before {
-        width: 14px;
-      }
-
-      .scale {
-        width: 122px;
-      }
-
-      .track {
-        width: 50px;
-      }
-
-      .bulb {
-        width: 66px;
-        height: 66px;
-      }
-    }
-
-    .container.display-mode .display {
-      width: min(840px, 100%);
-      margin: 0 auto;
-      height: 100%;
-      min-height: 0;
-      max-height: 100%;
-      padding: clamp(0.8rem, 1.8vh, 1.2rem) clamp(1rem, 2.4vw, 1.45rem) clamp(0.7rem, 1.7vh, 1rem);
-      border: 2px solid #ddbf76;
-      border-radius: min(34vw, 320px) min(34vw, 320px) 30px 30px;
-      box-shadow:
-        0 28px 56px rgba(78, 56, 12, 0.2),
-        inset 0 0 0 4px rgba(249, 232, 190, 0.85);
       background:
-        radial-gradient(circle at 50% 18%, rgba(251, 243, 219, 0.95), rgba(248, 235, 201, 0.88) 38%, rgba(244, 228, 188, 0.6) 60%, rgba(242, 225, 182, 0.35) 100%),
-        linear-gradient(180deg, #f8ebca 0%, #f4e1b8 100%);
-      overflow: hidden;
+        radial-gradient(circle at 55% 16%, rgba(178, 255, 188, 0.58), transparent 40%),
+        linear-gradient(180deg, #4fe07a 0%, #1fae53 45%, #0d7d3b 100%);
+      box-shadow: inset 0 0 24px rgba(10, 130, 55, 0.45), 0 0 24px rgba(32, 177, 77, 0.34);
+      transition: height 400ms ease;
     }
 
-    .container.display-mode .display::before {
-      display: none;
+    .tube-shell { position: absolute; inset: 0; width: 100%; }
+
+    .bulb-fill {
+      position: absolute;
+      width: 42%;
+      aspect-ratio: 1 / 1;
+      left: 29%;
+      bottom: 8.8%;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(208, 255, 200, 0.88), rgba(94, 231, 118, 0.6) 34%, rgba(21, 146, 61, 0.82) 66%, rgba(8, 90, 38, 0.95) 100%);
+      box-shadow: inset 0 -10px 20px rgba(4, 67, 27, 0.5), 0 0 34px rgba(63, 194, 92, 0.45);
     }
 
-    .container.display-mode .display::after {
-      display: none;
+    .bulb-asset { width: 55%; left: 22.5%; bottom: 2%; }
+    .cradle { width: 74%; left: 13%; bottom: -3.2%; }
+
+    .flourishL { width: 11%; left: 29%; bottom: 19%; }
+    .flourishR { width: 11%; right: 29%; bottom: 19%; }
+
+    .cta-wrap {
+      position: absolute;
+      left: 23%;
+      bottom: 4%;
+      width: 54%;
     }
 
-    .container.display-mode .festival-header {
-      display: block;
-      text-align: center;
-      margin-top: 0;
-      margin-bottom: clamp(0.2rem, 1vh, 0.55rem);
-      position: relative;
-      z-index: 2;
-    }
-
-    .container.display-mode .festival-header h2 {
-      margin: 0;
-      font-size: clamp(1.8rem, 4.8vw, 3rem);
-      line-height: 1.01;
-      letter-spacing: -0.01em;
-      font-weight: 700;
-      color: #8d6208;
-      text-shadow: 0 2px 0 rgba(255, 255, 255, 0.65);
-      font-family: "Brush Script MT", "Apple Chancery", "Georgia", "Times New Roman", serif;
-    }
-
-    .container.display-mode .festival-header p {
-      margin: 0.28rem 0 0;
-      font-size: clamp(0.8rem, 1.5vw, 0.95rem);
-      font-weight: 700;
-      color: #7a5a17;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-
-    .container.display-mode .festival-crescent {
-      display: inline-block;
-      margin-bottom: 0.05rem;
-      font-size: clamp(1.4rem, 2.8vw, 1.85rem);
-      color: #cca13e;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
-    }
-
-    .container.display-mode .arch-frame {
+    .cta-wrap img { width: 100%; display: block; }
+    .cta-text {
+      position: absolute;
+      inset: 0;
       display: grid;
-      grid-template-rows: auto 1fr;
-      gap: clamp(0.25rem, 0.9vh, 0.55rem);
-      flex: 1;
-      min-height: 0;
-      padding: clamp(0.45rem, 1.1vh, 0.8rem) clamp(0.45rem, 1.2vw, 0.75rem) clamp(0.35rem, 0.9vh, 0.6rem);
-      border: 2px solid rgba(206, 163, 69, 0.7);
-      border-radius: 250px 250px 24px 24px;
-      background: linear-gradient(180deg, rgba(255, 252, 245, 0.78), rgba(250, 240, 213, 0.62));
-      box-shadow: inset 0 0 0 3px rgba(248, 231, 190, 0.7);
-    }
-
-    .container.display-mode .amounts {
-      justify-content: center;
-      gap: 0.8rem;
-      margin-bottom: 0;
-    }
-
-    .container.display-mode .amounts > div {
-      min-width: clamp(130px, 19vw, 165px);
-      text-align: center;
-      border: 2px solid rgba(195, 150, 50, 0.68);
-      background: linear-gradient(180deg, #fffdf8 0%, #f6e7bf 100%);
-      box-shadow:
-        0 5px 14px rgba(118, 83, 21, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    }
-
-    .container.display-mode .amounts .value {
-      font-size: clamp(1.15rem, 2.9vw, 1.5rem);
-      font-weight: 800;
-      color: #114b2d;
-      letter-spacing: -0.01em;
-    }
-
-    .container.display-mode .thermometer-wrap {
-      min-height: 0;
-      height: 100%;
-      padding: clamp(0.2rem, 0.8vh, 0.55rem) 0.2rem 0.2rem;
-      align-items: center;
-    }
-
-    .container.display-mode .thermometer {
-      width: min(560px, 100%);
-      gap: 1.35rem;
-      padding: 0.2rem 0.15rem;
-      border-radius: 26px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(250, 238, 209, 0.34));
-      border: 1px solid rgba(200, 160, 70, 0.36);
-    }
-
-    .container.display-mode .scale {
-      width: 196px;
-      height: clamp(360px, 50vh, 560px);
-    }
-
-    .container.display-mode .track {
-      width: 78px;
-      right: 0;
-      border: 2px solid rgba(178, 133, 35, 0.8);
-      background: linear-gradient(180deg, rgba(252, 248, 232, 0.9), rgba(240, 224, 181, 0.86));
-      box-shadow:
-        inset 0 0 0 2px rgba(255, 255, 255, 0.7),
-        0 14px 30px rgba(78, 56, 12, 0.12);
-    }
-
-    .container.display-mode .fill {
-      background:
-        radial-gradient(circle at 60% 20%, rgba(180, 255, 184, 0.52), transparent 45%),
-        linear-gradient(180deg, #37d66d 0%, #14a54e 44%, #087337 100%);
-      border-top: 2px solid rgba(255, 255, 255, 0.5);
-    }
-
-    .container.display-mode .bulb {
-      width: 100px;
-      height: 100px;
-      right: -12px;
-      border: 2px solid rgba(182, 133, 30, 0.82);
-      background:
-        radial-gradient(circle at 35% 28%, rgba(154, 255, 154, 0.58), rgba(27, 156, 64, 0.74) 34%, #0c7e3b 64%, #075829 100%);
-      box-shadow:
-        inset 0 -10px 14px rgba(0, 0, 0, 0.22),
-        0 12px 24px rgba(35, 90, 49, 0.2);
-    }
-
-    .container.display-mode .tick-list {
-      right: 94px;
-    }
-
-    .container.display-mode .tick-list li {
-      font-size: clamp(0.95rem, 2.1vw, 1.16rem);
+      place-items: center;
+      margin: 0;
+      font-family: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+      font-size: clamp(1.65rem, 3.9vw, 3.4rem);
       font-weight: 700;
-      color: #3f3110;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.78);
+      color: #3b2a0d;
     }
 
-    .container.display-mode .tick-mark {
-      width: 34px;
-      height: 3px;
-      background: #9a7533;
-    }
+    .floralL { width: 15%; left: 8%; bottom: 4.8%; opacity: 0.95; }
+    .floralR { width: 15%; right: 8%; bottom: 4.8%; opacity: 0.95; }
+    .sparkA { width: 3.1%; right: 27%; top: 12.8%; opacity: 0.63; }
+    .sparkB { width: 2.5%; left: 24%; top: 15.2%; opacity: 0.48; }
+    .sparkDot { width: 1.3%; left: 60%; top: 13.8%; opacity: 0.5; }
 
-    .container.display-mode .display-cta {
-      display: block;
-      margin: clamp(0.2rem, 0.9vh, 0.75rem) auto 0.05rem;
-      width: min(460px, 92%);
-      text-align: center;
-      padding: clamp(0.45rem, 1vh, 0.68rem) 1rem clamp(0.5rem, 1vh, 0.74rem);
-      border-radius: 20px;
-      border: 2px solid rgba(178, 133, 35, 0.75);
-      background: linear-gradient(180deg, #fffaf0 0%, #f3ddb0 100%);
-      color: #6a4a05;
-      font-size: clamp(1.35rem, 3.9vw, 1.95rem);
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      font-family: "Georgia", "Times New Roman", serif;
-      box-shadow:
-        0 8px 18px rgba(118, 83, 21, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    }
-
-    .container.control-mode .display {
-      order: 2;
-      min-height: auto;
-      padding: 1.2rem 1.2rem 1rem 1.8rem;
-    }
-
-    .container.control-mode .controls {
-      order: 1;
-      padding-top: 1.2rem;
-    }
-
-    .container.control-mode .thermometer-wrap {
-      min-height: 260px;
-      padding-top: 0.6rem;
-    }
-
-    .container.control-mode .thermometer {
-      width: min(340px, 100%);
-    }
-
-    .container.control-mode .scale {
-      width: 126px;
-      height: clamp(240px, 34vh, 300px);
-    }
-
-    .container.control-mode .track {
-      width: 50px;
-    }
-
-    .container.control-mode .bulb {
-      width: 64px;
-      height: 64px;
-      right: -7px;
-    }
-
-    .container.control-mode .tick-list {
-      right: 62px;
-    }
-
-    .container.control-mode .tick-list li {
-      font-size: 0.82rem;
-    }
-
-    .container.control-mode .tick-mark {
-      width: 20px;
-      height: 2px;
-    }
-
-    .container.control-mode .festival-header,
-    .container.control-mode .display-cta {
-      display: none !important;
-    }
-
-    .container.control-mode .arch-frame {
-      display: contents;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      box-shadow: none;
+    @media (max-width: 960px) {
+      .container.control-mode { grid-template-columns: 1fr; }
+      .display { width: min(820px, 100%); }
     }
   </style>
 </head>
 <body>
   <main class="container" id="container">
-    <section class="card controls" id="controls">
+    <section class="controls" id="controls">
       <h1>Fundraising Thermometer</h1>
       <p class="subtitle" id="subtitle">Use control mode on your phone to update the live display.</p>
 
       <div class="field">
         <label for="maxValue">Goal / Max Value</label>
-        <input id="maxValue" type="number" min="1" step="1" value="100000">
+        <input id="maxValue" type="number" min="1" step="1" value="3000000">
       </div>
 
       <div class="field">
         <label for="currentValue">Current Value</label>
-        <input id="currentValue" type="number" min="0" step="1" value="1250">
+        <input id="currentValue" type="number" min="0" step="1" value="1750000">
       </div>
 
       <p class="status" id="statusText"><strong>Status:</strong> Initializing...</p>
     </section>
 
-    <section class="card display" aria-live="polite">
-      <div class="festival-header">
-        <div class="festival-crescent">☾ ✦</div>
-        <h2>Ramadan Fundraiser</h2>
-        <p>Community Giving Night</p>
-      </div>
+    <section class="display" aria-live="polite" aria-label="Ramadan fundraiser thermometer">
+      <img class="asset texture" src="/ramadan_full_asset_pack/ivory-speckle-overlay.svg" alt="">
+      <img class="asset skyline" src="/ramadan_full_asset_pack/mosque-skyline.svg" alt="">
+      <img class="asset arch" src="/ramadan_full_asset_pack/arch-frame-ornate.svg" alt="">
+      <img class="asset trim" src="/ramadan_full_asset_pack/islamic-border-pattern.svg" alt="">
 
-      <div class="arch-frame">
-      <div class="amounts">
-        <div><span>Raised:</span> <span class="value" id="raisedText">$0</span></div>
-        <div><span>Goal:</span> <span class="value" id="goalText">$0</span></div>
-        <div><span>Progress:</span> <span class="value" id="percentText">0%</span></div>
-      </div>
+      <img class="asset lanternA" src="/ramadan_full_asset_pack/lantern-large-a.svg" alt="">
+      <img class="asset lanternB" src="/ramadan_full_asset_pack/lantern-large-b.svg" alt="">
+      <img class="asset sparkA" src="/ramadan_full_asset_pack/sparkle-8pt.svg" alt="">
+      <img class="asset sparkB" src="/ramadan_full_asset_pack/sparkle-4pt.svg" alt="">
+      <img class="asset sparkDot" src="/ramadan_full_asset_pack/sparkle-dot.svg" alt="">
 
-      <div class="thermometer-wrap">
-        <div class="thermometer">
-          <div class="scale">
-            <ul class="tick-list" id="tickList"></ul>
-            <div class="track">
-              <div class="fill" id="fill"></div>
-            </div>
-            <div class="bulb"></div>
-          </div>
+      <header class="title-wrap">
+        <h2 class="title">Ramadan Fundraiser</h2>
+      </header>
+      <img class="asset divider" src="/ramadan_full_asset_pack/ornament-divider-small.svg" alt="">
+      <img class="asset crescent" src="/ramadan_full_asset_pack/crescent-topper.svg" alt="">
+
+      <aside class="milestones" id="milestonesPanel">
+        <div class="milestone-row">
+          <img src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestone-value" id="milestone0">$3,000,000</span>
         </div>
-      </div>
+        <div class="milestone-row">
+          <img src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestone-value" id="milestone1">$2,500,000</span>
+        </div>
+        <div class="milestone-row">
+          <img src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestone-value" id="milestone2">$2,000,000</span>
+        </div>
+        <div class="milestone-row">
+          <img src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestone-value" id="milestone3">$1,500,000</span>
+        </div>
+        <div class="milestone-row">
+          <img src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestone-value" id="milestone4">$1,000,000</span>
+        </div>
+        <div class="goal-label">GOAL</div>
+      </aside>
+
+      <aside class="amount-plaque">
+        <img class="panel" src="/ramadan_full_asset_pack/amount-plaque-panel.svg" alt="">
+        <img class="asset frame" src="/ramadan_full_asset_pack/amount-plaque-frame.svg" alt="">
+        <div class="amount-text">
+          <span class="label">Current Amount</span>
+          <span class="value" id="currentAmountText">$0</span>
+        </div>
+      </aside>
+
+      <div class="thermo-area">
+        <div class="fill-clip">
+          <div class="tube-fill" id="tubeFill"></div>
+        </div>
+        <img class="asset tube-shell" src="/ramadan_full_asset_pack/thermometer-shell.svg" alt="">
+        <div class="bulb-fill" id="bulbFill"></div>
+        <img class="asset bulb-asset" src="/ramadan_full_asset_pack/thermometer-bulb.svg" alt="">
+        <img class="asset cradle" src="/ramadan_full_asset_pack/bulb-cradle.svg" alt="">
       </div>
 
-      <p class="display-cta">Donate Generously</p>
+      <img class="asset flourishL" src="/ramadan_full_asset_pack/flourish-left.svg" alt="">
+      <img class="asset flourishR" src="/ramadan_full_asset_pack/flourish-right.svg" alt="">
+      <img class="asset lanternSmallL" src="/ramadan_full_asset_pack/lantern-small.svg" alt="">
+      <img class="asset lanternSmallR" src="/ramadan_full_asset_pack/lantern-small.svg" alt="">
+
+      <footer class="cta-wrap">
+        <img src="/ramadan_full_asset_pack/cta-plaque.svg" alt="">
+        <p class="cta-text">Donate Generously</p>
+      </footer>
+
+      <img class="asset floralL" src="/ramadan_full_asset_pack/corner-floral-left.svg" alt="">
+      <img class="asset floralR" src="/ramadan_full_asset_pack/corner-floral-right.svg" alt="">
     </section>
   </main>
 
   <script>
     const DEFAULT_STATE = {
-      maxValue: 100000,
-      currentValue: 1250
+      maxValue: 3000000,
+      currentValue: 1750000
     };
     const POLL_MS = 1500;
     const params = new URLSearchParams(window.location.search);
@@ -656,18 +434,23 @@
     }
 
     const adminToken = localStorage.getItem(tokenStorageKey) || "";
-
     const containerEl = document.getElementById("container");
     const controlsEl = document.getElementById("controls");
     const subtitleEl = document.getElementById("subtitle");
     const statusTextEl = document.getElementById("statusText");
     const maxInput = document.getElementById("maxValue");
     const currentInput = document.getElementById("currentValue");
-    const fillEl = document.getElementById("fill");
-    const tickListEl = document.getElementById("tickList");
-    const raisedTextEl = document.getElementById("raisedText");
-    const goalTextEl = document.getElementById("goalText");
-    const percentTextEl = document.getElementById("percentText");
+    const tubeFillEl = document.getElementById("tubeFill");
+    const bulbFillEl = document.getElementById("bulbFill");
+    const currentAmountTextEl = document.getElementById("currentAmountText");
+    const milestoneEls = [
+      document.getElementById("milestone0"),
+      document.getElementById("milestone1"),
+      document.getElementById("milestone2"),
+      document.getElementById("milestone3"),
+      document.getElementById("milestone4")
+    ];
+
     const controlInputs = [maxInput, currentInput];
     let isEditing = false;
     let suppressRemoteUntilMs = 0;
@@ -675,7 +458,6 @@
     if (mode === "display") {
       document.body.classList.add("display-viewport");
       controlsEl.classList.add("hidden");
-      containerEl.classList.add("display-mode");
     } else {
       containerEl.classList.add("control-mode");
       subtitleEl.textContent = "Control mode is active. Updates are synced to the live display.";
@@ -693,10 +475,14 @@
       return parsed >= 0 ? parsed : fallback;
     }
 
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
     function normalizeState(rawState) {
       const maxValue = toPositiveNumber(rawState?.maxValue, DEFAULT_STATE.maxValue);
       const currentRaw = toNonNegativeNumber(rawState?.currentValue, DEFAULT_STATE.currentValue);
-      const currentValue = Math.min(currentRaw, maxValue);
+      const currentValue = clamp(currentRaw, 0, maxValue);
       return { maxValue, currentValue };
     }
 
@@ -734,67 +520,33 @@
         statusTextEl.style.background = "#fff4f4";
         statusTextEl.style.borderColor = "#f3cccc";
       } else {
-        statusTextEl.style.background = "#f3faf5";
-        statusTextEl.style.borderColor = "#d7e9dc";
+        statusTextEl.style.background = "#fffaf0";
+        statusTextEl.style.borderColor = "#e2d5bc";
       }
     }
 
-    function niceStep(rawStep) {
-      const safeStep = Math.max(1, rawStep);
-      const magnitude = 10 ** Math.floor(Math.log10(safeStep));
-      const normalized = safeStep / magnitude;
-
-      if (normalized <= 1) return 1 * magnitude;
-      if (normalized <= 2) return 2 * magnitude;
-      if (normalized <= 5) return 5 * magnitude;
-      return 10 * magnitude;
+    function getMilestones(maxValue) {
+      return [1, 5 / 6, 2 / 3, 1 / 2, 1 / 3].map((ratio) => Math.round(maxValue * ratio));
     }
 
-    function getScaleValues(maxValue) {
-      const maxLabels = 9;
-      const maxIntervals = maxLabels - 1;
-      const step = niceStep(maxValue / maxIntervals);
-
-      const values = [0];
-      for (let v = step; v < maxValue; v += step) {
-        values.push(v);
-      }
-      values.push(maxValue);
-      return values;
-    }
-
-    function createTicks(maxValue) {
-      tickListEl.innerHTML = "";
-      const scaleValues = getScaleValues(maxValue);
-
-      for (const tickValue of scaleValues) {
-        const positionPercent = (tickValue / maxValue) * 100;
-
-        const li = document.createElement("li");
-        li.style.bottom = positionPercent + "%";
-
-        const mark = document.createElement("span");
-        mark.className = "tick-mark";
-
-        const label = document.createElement("span");
-        label.textContent = formatMoney(tickValue);
-
-        li.appendChild(mark);
-        li.appendChild(label);
-        tickListEl.appendChild(li);
-
-      }
+    function renderMilestones(maxValue) {
+      const milestoneValues = getMilestones(maxValue);
+      milestoneEls.forEach((el, idx) => {
+        if (el) {
+          el.textContent = formatMoney(milestoneValues[idx] || 0);
+        }
+      });
     }
 
     function renderThermometer(state, options = {}) {
       const shouldSyncInputs = options.syncInputs !== false;
       const normalized = normalizeState(state);
-      const percent = (normalized.currentValue / normalized.maxValue) * 100;
-      fillEl.style.height = percent + "%";
-      raisedTextEl.textContent = formatMoney(normalized.currentValue);
-      goalTextEl.textContent = formatMoney(normalized.maxValue);
-      percentTextEl.textContent = Math.round(percent) + "%";
-      createTicks(normalized.maxValue);
+      const fillPercent = clamp(normalized.currentValue / normalized.maxValue, 0, 1);
+
+      tubeFillEl.style.height = (fillPercent * 100) + "%";
+      currentAmountTextEl.textContent = formatMoney(normalized.currentValue);
+      bulbFillEl.style.opacity = String(0.65 + fillPercent * 0.35);
+      renderMilestones(normalized.maxValue);
 
       if (mode === "control" && shouldSyncInputs) {
         applyStateToInputs(normalized);
@@ -845,30 +597,19 @@
 
     if (mode === "control") {
       for (const input of controlInputs) {
-        input.addEventListener("focus", () => {
-          isEditing = true;
-        });
-        input.addEventListener("blur", () => {
-          isEditing = false;
-        });
+        input.addEventListener("focus", () => { isEditing = true; });
+        input.addEventListener("blur", () => { isEditing = false; });
       }
+
       maxInput.addEventListener("input", debouncedPush);
       currentInput.addEventListener("input", debouncedPush);
-      maxInput.addEventListener("input", () => {
-        suppressRemoteUntilMs = Date.now() + (POLL_MS * 2);
-      });
-      currentInput.addEventListener("input", () => {
-        suppressRemoteUntilMs = Date.now() + (POLL_MS * 2);
-      });
+      maxInput.addEventListener("input", () => { suppressRemoteUntilMs = Date.now() + (POLL_MS * 2); });
+      currentInput.addEventListener("input", () => { suppressRemoteUntilMs = Date.now() + (POLL_MS * 2); });
       maxInput.addEventListener("change", () => {
-        pushState().catch(() => {
-          setStatus("Could not sync update. Check token/connection.", "error");
-        });
+        pushState().catch(() => setStatus("Could not sync update. Check token/connection.", "error"));
       });
       currentInput.addEventListener("change", () => {
-        pushState().catch(() => {
-          setStatus("Could not sync update. Check token/connection.", "error");
-        });
+        pushState().catch(() => setStatus("Could not sync update. Check token/connection.", "error"));
       });
     }
 
@@ -877,6 +618,7 @@
         const latest = await fetchState();
         const shouldSyncInputs = !(mode === "control" && (isEditing || Date.now() < suppressRemoteUntilMs));
         renderThermometer(latest, { syncInputs: shouldSyncInputs });
+
         if (mode === "display") {
           setStatus("Display mode live. Campaign: " + campaign);
         } else if (adminToken) {
