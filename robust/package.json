@@ -1,0 +1,9 @@
+{
+  "name": "thermometer-robust",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Robust hosted thermometer backend scaffold",
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}
