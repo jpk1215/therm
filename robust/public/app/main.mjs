@@ -3,23 +3,48 @@ import { formatMoney } from "./format.mjs";
 import { getScaleValues } from "./scale.mjs";
 import { getStateKey, normalizeState } from "./state-utils.mjs";
 
+const DEFAULT_CAMPAIGN = "default";
+const CAMPAIGN_ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
 const HIDDEN_POLL_MS = 5000;
 const REQUEST_TIMEOUT_MS = 4000;
 const MAX_BACKOFF_MS = 10000;
 const params = new URLSearchParams(window.location.search);
 const mode = params.get("mode") === "control" ? "control" : "display";
-const campaign = params.get("campaign") || "default";
+const rawCampaign = params.get("campaign");
+const campaign = normalizeCampaignId(rawCampaign);
 const tokenParam = params.get("token");
-const tokenStorageKey = `therm-admin-token:${campaign}`;
+const tokenStorageKey = `therm-admin-token:${campaign || DEFAULT_CAMPAIGN}`;
+
+function normalizeCampaignId(value) {
+  const candidate = String(value || "").trim() || DEFAULT_CAMPAIGN;
+  return CAMPAIGN_ID_PATTERN.test(candidate) ? candidate : "";
+}
+
+function readTokenFromStorage(key) {
+  try {
+    return window.localStorage.getItem(key) || "";
+  } catch {
+    return "";
+  }
+}
+
+function persistToken(key, value) {
+  try {
+    window.localStorage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 if (tokenParam) {
-  localStorage.setItem(tokenStorageKey, tokenParam);
+  persistToken(tokenStorageKey, tokenParam);
   params.delete("token");
   const cleanQuery = params.toString();
   history.replaceState(null, "", window.location.pathname + (cleanQuery ? `?${cleanQuery}` : ""));
 }
 
-const adminToken = localStorage.getItem(tokenStorageKey) || "";
+const adminToken = tokenParam || readTokenFromStorage(tokenStorageKey);
 
 const containerEl = document.getElementById("container");
 const controlsEl = document.getElementById("controls");
@@ -35,6 +60,7 @@ const tickListEl = document.getElementById("tickList");
 const raisedTextEl = document.getElementById("raisedText");
 const goalTextEl = document.getElementById("goalText");
 const percentTextEl = document.getElementById("percentText");
+const displayCtaEl = document.querySelector("[data-testid='display-cta']");
 const controlInputs = [maxInput, currentInput];
 
 let isEditing = false;
@@ -55,7 +81,10 @@ if (mode === "display") {
 } else {
   containerEl.classList.add("control-mode");
   subtitleEl.textContent = "Control mode is active. Updates are synced to the live display.";
-  campaignBadgeEl.textContent = `Campaign: ${campaign}`;
+  campaignBadgeEl.textContent = campaign ? `Campaign: ${campaign}` : "Campaign: invalid";
+  if (!campaign) {
+    campaignBadgeEl.classList.add("badge-warning");
+  }
 }
 
 function applyStateToInputs(state) {
@@ -132,6 +161,23 @@ function getTimestampLabel(prefix) {
   return `${prefix} ${formatted}`;
 }
 
+function showCampaignError() {
+  setStatus("Invalid campaign ID. Use letters, numbers, hyphens, or underscores.", "error");
+
+  if (mode === "control") {
+    setSyncMeta("Update the URL to use a valid campaign name.");
+    return;
+  }
+
+  raisedTextEl.textContent = "--";
+  goalTextEl.textContent = "--";
+  percentTextEl.textContent = "--";
+  fillEl.style.height = "0%";
+  fillEl.setAttribute("aria-valuenow", "0");
+  tickListEl.innerHTML = "";
+  displayCtaEl.textContent = "Invalid campaign ID";
+}
+
 function setStatus(message, type = "ok") {
   const signature = `${type}:${message}`;
   if (signature === lastStatusSignature) {
@@ -139,7 +185,9 @@ function setStatus(message, type = "ok") {
   }
 
   lastStatusSignature = signature;
-  statusTextEl.innerHTML = `<strong>Status:</strong> ${message}`;
+  const label = document.createElement("strong");
+  label.textContent = "Status:";
+  statusTextEl.replaceChildren(label, document.createTextNode(` ${message}`));
   if (type === "error") {
     statusTextEl.style.background = "#fff4f4";
     statusTextEl.style.borderColor = "#f3cccc";
@@ -216,6 +264,11 @@ async function fetchState() {
 
 async function pushState() {
   if (mode !== "control") return;
+
+  if (!campaign) {
+    showCampaignError();
+    return;
+  }
 
   if (!adminToken) {
     setStatus("Missing token. Open control URL with ?token=YOUR_ADMIN_WRITE_TOKEN", "error");
@@ -300,6 +353,11 @@ if (mode === "control") {
 
 async function refreshLoop() {
   if (refreshInFlight) {
+    return;
+  }
+
+  if (!campaign) {
+    showCampaignError();
     return;
   }
 

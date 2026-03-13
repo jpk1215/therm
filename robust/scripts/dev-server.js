@@ -3,6 +3,7 @@ const path = require("path");
 const http = require("http");
 const { URL } = require("url");
 
+const { normalizeCampaignId } = require("../lib/campaign-id");
 const { DEFAULT_STATE } = require("../lib/state-model");
 const { canUseTestApi, getState, resetState, setState } = require("../lib/state-store");
 
@@ -90,15 +91,15 @@ function serveStatic(req, res, pathname) {
 }
 
 async function handleApi(req, res, url) {
-  const campaign = String(url.searchParams.get("campaign") || "default");
-
   if (url.pathname === "/api/state" && req.method === "GET") {
+    const campaign = normalizeCampaignId(url.searchParams.get("campaign"));
     const state = await getState(campaign);
     sendJson(res, 200, state);
     return;
   }
 
   if (url.pathname === "/api/state" && req.method === "POST") {
+    const campaign = normalizeCampaignId(url.searchParams.get("campaign"));
     const sentToken = req.headers["x-admin-token"];
     if (!process.env.ADMIN_WRITE_TOKEN || sentToken !== process.env.ADMIN_WRITE_TOKEN) {
       sendJson(res, 401, { error: "Unauthorized" });
@@ -112,6 +113,7 @@ async function handleApi(req, res, url) {
   }
 
   if (url.pathname === "/api/test/reset" && req.method === "POST") {
+    const campaign = normalizeCampaignId(url.searchParams.get("campaign"));
     if (!canUseTestApi()) {
       sendJson(res, 403, { error: "Test reset API is disabled" });
       return;
@@ -142,7 +144,7 @@ const server = http.createServer(async (req, res) => {
 
     serveStatic(req, res, url.pathname);
   } catch (error) {
-    sendJson(res, 500, { error: error.message || "Server error" });
+    sendJson(res, error.statusCode || 500, { error: error.message || "Server error" });
   }
 });
 

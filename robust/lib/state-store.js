@@ -1,4 +1,5 @@
 const admin = require("firebase-admin");
+const { normalizeCampaignId } = require("./campaign-id");
 const { DEFAULT_STATE, normalizeState } = require("./state-model");
 
 let initialized = false;
@@ -50,22 +51,25 @@ function getMemoryState(campaign) {
 }
 
 async function getState(campaign) {
+  const normalizedCampaign = normalizeCampaignId(campaign);
+
   if (isMemoryMode()) {
-    return normalizeState(getMemoryState(campaign));
+    return normalizeState(getMemoryState(normalizedCampaign));
   }
 
   initFirebase();
-  const ref = admin.database().ref(`campaigns/${campaign}`);
+  const ref = admin.database().ref(`campaigns/${normalizedCampaign}`);
   const snapshot = await ref.get();
   const data = snapshot.val() || DEFAULT_STATE;
   return normalizeState(data);
 }
 
 async function setState(campaign, rawState) {
+  const normalizedCampaign = normalizeCampaignId(campaign);
   const normalized = normalizeState(rawState);
 
   if (isMemoryMode()) {
-    memoryStore.set(campaign, {
+    memoryStore.set(normalizedCampaign, {
       ...normalized,
       updatedAt: Date.now()
     });
@@ -73,7 +77,7 @@ async function setState(campaign, rawState) {
   }
 
   initFirebase();
-  const ref = admin.database().ref(`campaigns/${campaign}`);
+  const ref = admin.database().ref(`campaigns/${normalizedCampaign}`);
   await ref.set({
     ...normalized,
     updatedAt: Date.now()
@@ -82,10 +86,11 @@ async function setState(campaign, rawState) {
 }
 
 async function resetState(campaign, rawState) {
+  const normalizedCampaign = normalizeCampaignId(campaign);
   const normalized = normalizeState(rawState || DEFAULT_STATE);
 
   if (isMemoryMode()) {
-    memoryStore.set(campaign, {
+    memoryStore.set(normalizedCampaign, {
       ...normalized,
       updatedAt: Date.now()
     });
@@ -97,7 +102,7 @@ async function resetState(campaign, rawState) {
   }
 
   initFirebase();
-  const ref = admin.database().ref(`campaigns/${campaign}`);
+  const ref = admin.database().ref(`campaigns/${normalizedCampaign}`);
   await ref.set({
     ...normalized,
     updatedAt: Date.now()

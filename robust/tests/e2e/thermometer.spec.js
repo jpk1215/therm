@@ -72,6 +72,13 @@ test.describe("thermometer smoke flows", () => {
     expect(token).toBe("test-admin-token");
   });
 
+  test("control mode rejects invalid campaign IDs safely", async ({ page }) => {
+    await page.goto(`/?mode=control&campaign=${encodeURIComponent("bad/name")}`);
+
+    await expect(page.getByTestId("campaign-badge")).toHaveText("Campaign: invalid");
+    await expect(page.getByTestId("status-text")).toContainText("Invalid campaign ID");
+  });
+
   test("display panel matches the approved presentation", async ({ page, request }) => {
     await resetCampaign(request, "display-visual", {
       maxValue: 125000,

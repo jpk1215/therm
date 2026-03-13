@@ -45,13 +45,11 @@ test("memory mode persists normalized campaign state", async () => {
   try {
     const updated = await stateStore.setState("alpha", {
       maxValue: 5000,
-      currentValue: 7000,
-      incrementValue: 0
+      currentValue: 7000
     });
 
     assert.deepEqual(updated, {
       maxValue: 5000,
-      incrementValue: 10000,
       currentValue: 5000
     });
 
@@ -71,14 +69,12 @@ test("resetState replaces memory-backed state with defaults", async () => {
   try {
     await stateStore.setState("beta", {
       maxValue: 70000,
-      currentValue: 25000,
-      incrementValue: 5000
+      currentValue: 25000
     });
 
     const reset = await stateStore.resetState("beta");
     assert.deepEqual(reset, {
       maxValue: 100000,
-      incrementValue: 10000,
       currentValue: 1250
     });
   } finally {
@@ -94,6 +90,22 @@ test("test API is disabled outside memory mode unless explicitly enabled", async
 
   try {
     assert.equal(stateStore.canUseTestApi(), false);
+  } finally {
+    restore();
+  }
+});
+
+test("invalid campaign IDs are rejected by the shared state store boundary", async () => {
+  const { stateStore, restore } = loadStateStoreWithEnv({
+    THERM_STATE_MODE: "memory",
+    ALLOW_TEST_API: "1"
+  });
+
+  try {
+    await assert.rejects(
+      () => stateStore.getState("bad/name"),
+      /Invalid campaign ID/
+    );
   } finally {
     restore();
   }

@@ -102,8 +102,7 @@ test("dev server state API enforces auth and persists updates", async () => {
       },
       body: JSON.stringify({
         maxValue: 10000,
-        currentValue: 2500,
-        incrementValue: 1000
+        currentValue: 2500
       })
     });
 
@@ -111,7 +110,6 @@ test("dev server state API enforces auth and persists updates", async () => {
     const seededPayload = await seededResponse.json();
     assert.deepEqual(seededPayload.state, {
       maxValue: 10000,
-      incrementValue: 1000,
       currentValue: 2500
     });
 
@@ -141,8 +139,7 @@ test("dev server state API enforces auth and persists updates", async () => {
       },
       body: JSON.stringify({
         maxValue: 15000,
-        currentValue: 5000,
-        incrementValue: 2500
+        currentValue: 5000
       })
     });
 
@@ -150,7 +147,6 @@ test("dev server state API enforces auth and persists updates", async () => {
     const authorizedPayload = await authorizedResponse.json();
     assert.deepEqual(authorizedPayload.state, {
       maxValue: 15000,
-      incrementValue: 2500,
       currentValue: 5000
     });
 
@@ -159,5 +155,18 @@ test("dev server state API enforces auth and persists updates", async () => {
     });
     assert.equal(updatedStateResponse.status, 200);
     assert.deepEqual(await updatedStateResponse.json(), authorizedPayload.state);
+  });
+});
+
+test("dev server rejects invalid campaign IDs before touching state", async () => {
+  await withDevServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/state?campaign=${encodeURIComponent("bad/name")}`, {
+      cache: "no-store"
+    });
+
+    assert.equal(response.status, 400);
+    assert.deepEqual(await response.json(), {
+      error: "Invalid campaign ID. Use letters, numbers, hyphens, or underscores."
+    });
   });
 });
