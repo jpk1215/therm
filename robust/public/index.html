@@ -6,15 +6,16 @@
   <title>Fundraising Thermometer</title>
   <style>
     :root {
-      --bg: #f4f6f8;
-      --card: #ffffff;
-      --border: #d7dde4;
-      --text: #14202b;
-      --muted: #516172;
-      --track: #e8edf2;
-      --fill: #1f9d55;
-      --fill-deep: #147a40;
-      --accent: #0f1722;
+      --ivory: #fbf7ef;
+      --ivory-soft: #f6eedc;
+      --gold-deep: #8e6620;
+      --gold-mid: #cda34e;
+      --gold-light: #f2d98f;
+      --text: #1c150b;
+      --muted: #69542a;
+      --emerald: #1ea44f;
+      --emerald-deep: #0f7437;
+      --control-border: #d8dee6;
     }
 
     * { box-sizing: border-box; }
@@ -24,7 +25,7 @@
       min-height: 100vh;
       font-family: "Inter", "Segoe UI", Arial, sans-serif;
       color: var(--text);
-      background: linear-gradient(180deg, #f7f9fb 0%, #edf2f7 100%);
+      background: linear-gradient(180deg, #faf8f2 0%, #efe6d3 100%);
     }
 
     body.display-viewport {
@@ -32,7 +33,8 @@
       overflow: hidden;
       display: grid;
       place-items: center;
-      padding: 0.35rem;
+      padding: 0.3rem;
+      background: radial-gradient(circle at 50% 18%, #fffdf8 0%, #f7efde 56%, #eee0c4 100%);
     }
 
     .container {
@@ -58,10 +60,10 @@
     }
 
     .controls {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: #ffffff;
+      border: 1px solid var(--control-border);
       border-radius: 14px;
-      box-shadow: 0 10px 28px rgba(20, 32, 43, 0.08);
+      box-shadow: 0 10px 28px rgba(52, 38, 11, 0.08);
       padding: 1rem;
     }
 
@@ -76,7 +78,7 @@
     .subtitle {
       margin: 0.5rem 0 1rem;
       font-size: 0.94rem;
-      color: var(--muted);
+      color: #5e6874;
     }
 
     .field { margin-bottom: 0.85rem; }
@@ -90,7 +92,7 @@
 
     input[type="number"] {
       width: 100%;
-      border: 1.5px solid var(--border);
+      border: 1.5px solid var(--control-border);
       border-radius: 10px;
       padding: 0.72rem 0.8rem;
       font-size: 1rem;
@@ -108,7 +110,7 @@
       margin: 0.95rem 0 0;
       padding: 0.68rem 0.75rem;
       border-radius: 10px;
-      border: 1px solid #d6dee7;
+      border: 1px solid #dfd8c7;
       background: #f7fbff;
       color: #3d5166;
       font-size: 0.9rem;
@@ -120,165 +122,344 @@
       max-width: 100%;
       margin: 0 auto;
       aspect-ratio: 5 / 8;
-      background: #fff;
-      border: 1px solid #d8dfe7;
-      border-radius: 18px;
-      box-shadow: 0 14px 36px rgba(18, 30, 44, 0.12);
+      background:
+        radial-gradient(circle at 50% 14%, rgba(255, 255, 255, 0.95), rgba(251, 245, 230, 0.92) 48%, rgba(244, 232, 205, 0.9) 100%);
+      border-radius: 22px;
+      box-shadow: 0 18px 42px rgba(82, 58, 17, 0.2);
       overflow: hidden;
-      padding: 4.8% 5.2%;
-      display: grid;
-      grid-template-rows: auto auto 1fr auto;
-      gap: 0.35rem;
+      isolation: isolate;
     }
 
     .container.display-mode .display {
       width: min(
-        calc((100vh - 0.9rem) * 0.625),
-        calc(100vw - 0.9rem)
+        calc((100vh - 0.7rem) * 0.625),
+        calc(100vw - 0.7rem)
       );
     }
 
+    .asset {
+      position: absolute;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .texture {
+      inset: 0;
+      opacity: 0.18;
+    }
+
+    .arch {
+      inset: 0;
+    }
+
+    .skyline {
+      width: 41%;
+      right: 12%;
+      bottom: 23%;
+      opacity: 0.18;
+    }
+
+    .topLanternLeft {
+      width: 8.8%;
+      left: 9.2%;
+      top: 2%;
+    }
+
+    .topLanternRight {
+      width: 8.8%;
+      right: 9.2%;
+      top: 2%;
+    }
+
+    .smallLanternLeft {
+      width: 5.2%;
+      left: 7.4%;
+      bottom: 7%;
+      opacity: 0.9;
+    }
+
+    .smallLanternRight {
+      width: 5.2%;
+      right: 7.4%;
+      bottom: 7%;
+      opacity: 0.9;
+    }
+
+    .cornerLeft {
+      width: 10.5%;
+      left: 9%;
+      bottom: 6.4%;
+      opacity: 0.96;
+    }
+
+    .cornerRight {
+      width: 10.5%;
+      right: 9%;
+      bottom: 6.4%;
+      opacity: 0.96;
+    }
+
+    .sparkleA {
+      width: 2.4%;
+      left: 31%;
+      top: 13.9%;
+      opacity: 0.52;
+    }
+
+    .sparkleB {
+      width: 2.2%;
+      right: 31%;
+      top: 13.6%;
+      opacity: 0.48;
+    }
+
+    .sparkleDot {
+      width: 1.1%;
+      right: 24%;
+      top: 11.7%;
+      opacity: 0.44;
+    }
+
     .title {
+      position: absolute;
+      top: 10.8%;
+      left: 0;
+      width: 100%;
       margin: 0;
       text-align: center;
-      font-size: clamp(1.9rem, 5vw, 3.3rem);
-      line-height: 1.04;
-      font-weight: 800;
-      letter-spacing: -0.01em;
+      font-family: "Cormorant Garamond", "Georgia", "Times New Roman", serif;
+      font-size: clamp(2rem, 4.7vw, 4rem);
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: #7a5412;
+      text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9),
+        0 4px 14px rgba(112, 79, 21, 0.18);
     }
 
-    .subline {
-      text-align: center;
-      color: var(--muted);
-      font-size: clamp(0.72rem, 1.35vw, 0.95rem);
-      margin-bottom: 0.3rem;
+    .divider {
+      width: 34%;
+      left: 33%;
+      top: 17.9%;
+      opacity: 0.82;
     }
 
-    .main {
-      display: grid;
-      grid-template-columns: 1.15fr 0.9fr 1.15fr;
-      align-items: end;
-      min-height: 0;
-      gap: 0.6rem;
+    .crescent {
+      width: 11.4%;
+      left: 44.3%;
+      top: 18.8%;
     }
 
-    .milestones {
-      align-self: center;
-      display: grid;
-      gap: clamp(0.45rem, 1vw, 0.75rem);
+    .milestonePanel {
+      position: absolute;
+      top: 28.8%;
+      left: 9.7%;
+      width: 30.5%;
     }
 
-    .milestone {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: clamp(30px, 4.2vw, 46px);
-      border-bottom: 2px solid #d7dee6;
-      font-size: clamp(1rem, 2.2vw, 2rem);
-      font-weight: 900;
-      color: var(--accent);
-      white-space: nowrap;
-    }
-
-    .goal-label {
-      margin-top: 0.55rem;
-      font-size: clamp(1.35rem, 2.9vw, 2.4rem);
-      font-weight: 900;
-      color: var(--accent);
-    }
-
-    .thermo {
+    .milestoneRow {
       position: relative;
       width: 100%;
+      height: clamp(48px, 4.9vw, 74px);
+      margin-bottom: clamp(7px, 0.9vw, 13px);
+    }
+
+    .milestoneLine {
+      position: absolute;
+      inset: 0;
+      width: 100%;
       height: 100%;
-      min-height: 320px;
+      object-fit: contain;
+    }
+
+    .milestoneValue {
+      position: absolute;
+      inset: 0;
       display: grid;
-      align-items: end;
-      justify-items: center;
-      padding-bottom: 16%;
+      place-items: center start;
+      padding-left: 6%;
+      font-size: clamp(1.15rem, 2.55vw, 2.15rem);
+      line-height: 1;
+      font-weight: 900;
+      color: #1b150b;
+      letter-spacing: -0.01em;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
     }
 
-    .track {
-      position: relative;
-      width: 38%;
-      height: 86%;
-      min-height: 280px;
-      border-radius: 999px;
-      border: 3px solid #cad3de;
-      background: linear-gradient(180deg, #fafcff 0%, var(--track) 100%);
-      overflow: hidden;
+    .goalLabel {
+      margin-top: clamp(10px, 1vw, 15px);
+      padding-left: 6%;
+      font-size: clamp(1.55rem, 3vw, 2.35rem);
+      font-weight: 900;
+      color: #1b150b;
     }
 
-    .fill {
+    .amountPlaque {
+      position: absolute;
+      width: 31%;
+      right: 9.8%;
+      top: 32%;
+    }
+
+    .amountPanel {
+      width: 100%;
+      display: block;
+    }
+
+    .amountFrame {
+      inset: 0;
+      width: 100%;
+    }
+
+    .amountText {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      line-height: 1.02;
+    }
+
+    .amountLabel {
+      display: block;
+      margin-bottom: 0.18em;
+      font-family: "Cormorant Garamond", "Georgia", "Times New Roman", serif;
+      font-size: clamp(1.08rem, 2.05vw, 1.9rem);
+      font-weight: 700;
+      color: #4e3910;
+    }
+
+    .amountValue {
+      display: block;
+      font-size: clamp(1.9rem, 4.35vw, 3.8rem);
+      line-height: 1;
+      font-weight: 900;
+      color: #18120a;
+      letter-spacing: -0.02em;
+    }
+
+    .thermometerArea {
+      position: absolute;
+      width: 23.5%;
+      left: 38.25%;
+      top: 22.3%;
+      height: 61%;
+    }
+
+    .fillClip {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 16%;
+      -webkit-mask-image: url("/ramadan_full_asset_pack/thermometer-fill-mask.svg");
+      -webkit-mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center top;
+      mask-image: url("/ramadan_full_asset_pack/thermometer-fill-mask.svg");
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center top;
+    }
+
+    .tubeFill {
       position: absolute;
       left: 0;
       right: 0;
       bottom: 0;
       height: 0;
-      background: linear-gradient(180deg, var(--fill) 0%, var(--fill-deep) 100%);
-      border-top: 2px solid rgba(255, 255, 255, 0.55);
-      transition: height 280ms ease;
+      background:
+        radial-gradient(circle at 55% 16%, rgba(196, 255, 194, 0.55), transparent 40%),
+        linear-gradient(180deg, #44d06b 0%, var(--emerald) 46%, var(--emerald-deep) 100%);
+      box-shadow:
+        inset 0 0 22px rgba(10, 130, 55, 0.42),
+        0 0 24px rgba(42, 182, 89, 0.28);
+      transition: height 320ms ease;
     }
 
-    .bulb {
+    .tubeShell {
+      inset: 0;
+      width: 100%;
+    }
+
+    .bulbGlow {
       position: absolute;
-      bottom: 0;
-      width: 34%;
+      width: 41%;
       aspect-ratio: 1 / 1;
+      left: 29.5%;
+      bottom: 7.8%;
       border-radius: 999px;
-      border: 3px solid #cad3de;
-      background: radial-gradient(circle at 34% 30%, #59d07c, #219b56 56%, #167540 100%);
-      box-shadow: inset 0 -8px 12px rgba(0, 0, 0, 0.18);
+      background:
+        radial-gradient(circle at 35% 32%, rgba(191, 255, 180, 0.92), rgba(98, 224, 116, 0.65) 34%, rgba(31, 164, 79, 0.82) 64%, rgba(15, 116, 55, 0.96) 100%);
+      box-shadow:
+        inset 0 -10px 18px rgba(4, 67, 27, 0.42),
+        0 0 30px rgba(54, 200, 95, 0.34);
     }
 
-    .current-box {
-      align-self: center;
-      border: 2px solid #d3dbe5;
-      border-radius: 12px;
-      background: #f8fbff;
-      padding: clamp(0.65rem, 1.4vw, 1rem);
-      text-align: center;
+    .bulbAsset {
+      width: 55%;
+      left: 22.5%;
+      bottom: 2%;
     }
 
-    .current-label {
+    .bulbCradle {
+      width: 74%;
+      left: 13%;
+      bottom: -3%;
+    }
+
+    .flourishLeft {
+      width: 9.6%;
+      left: 27.5%;
+      bottom: 18.8%;
+      opacity: 0.84;
+    }
+
+    .flourishRight {
+      width: 9.6%;
+      right: 27.5%;
+      bottom: 18.8%;
+      opacity: 0.84;
+    }
+
+    .ctaWrap {
+      position: absolute;
+      left: 22%;
+      bottom: 4.5%;
+      width: 56%;
+    }
+
+    .ctaPlaque {
+      width: 100%;
+      display: block;
+    }
+
+    .ctaText {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
       margin: 0;
-      font-size: clamp(1.1rem, 2vw, 1.7rem);
+      font-family: "Cormorant Garamond", "Georgia", "Times New Roman", serif;
+      font-size: clamp(2rem, 4.4vw, 3.65rem);
+      line-height: 1;
       font-weight: 700;
-      color: #344657;
-    }
-
-    .current-value {
-      margin: 0.25rem 0 0;
-      font-size: clamp(2rem, 4.6vw, 4rem);
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: -0.01em;
-      color: #111a23;
-    }
-
-    .footer {
-      margin-top: 0.2rem;
-      text-align: center;
-      border-top: 1px solid #e1e7ef;
-      padding-top: 0.65rem;
-    }
-
-    .cta {
-      margin: 0;
-      font-size: clamp(2rem, 5vw, 4.1rem);
-      line-height: 1;
-      font-weight: 800;
-      color: #111a23;
+      color: #3b2a0d;
     }
 
     .meta {
-      margin-top: 0.45rem;
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      font-size: clamp(0.76rem, 1.3vw, 0.96rem);
-      color: #465869;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 1.25%;
+      text-align: center;
+      font-size: clamp(0.72rem, 1.2vw, 0.9rem);
+      color: #6d592d;
       font-weight: 700;
+      letter-spacing: 0.02em;
     }
 
     @media (max-width: 980px) {
@@ -295,58 +476,99 @@
 
       <div class="field">
         <label for="maxValue">Goal / Max Value</label>
-        <input id="maxValue" type="number" min="1" step="1" value="50000">
+        <input id="maxValue" type="number" min="1" step="1" value="3000000">
       </div>
 
       <div class="field">
         <label for="currentValue">Current Value</label>
-        <input id="currentValue" type="number" min="0" step="1" value="13000">
+        <input id="currentValue" type="number" min="0" step="1" value="1750000">
       </div>
 
       <p class="status" id="statusText"><strong>Status:</strong> Initializing...</p>
     </section>
 
-    <section class="display" aria-live="polite" aria-label="Fundraising thermometer display">
+    <section class="display" aria-live="polite" aria-label="Ramadan fundraiser display">
+      <img class="asset texture" src="/ramadan_full_asset_pack/ivory-speckle-overlay.svg" alt="">
+      <img class="asset arch" src="/ramadan_full_asset_pack/arch-frame-ornate.svg" alt="">
+      <img class="asset skyline" src="/ramadan_full_asset_pack/mosque-skyline.svg" alt="">
+
+      <img class="asset topLanternLeft" src="/ramadan_full_asset_pack/lantern-large-a.svg" alt="">
+      <img class="asset topLanternRight" src="/ramadan_full_asset_pack/lantern-large-b.svg" alt="">
+      <img class="asset sparkleA" src="/ramadan_full_asset_pack/sparkle-4pt.svg" alt="">
+      <img class="asset sparkleB" src="/ramadan_full_asset_pack/sparkle-8pt.svg" alt="">
+      <img class="asset sparkleDot" src="/ramadan_full_asset_pack/sparkle-dot.svg" alt="">
+
       <h2 class="title">Ramadan Fundraiser</h2>
-      <div class="subline">Live Campaign Display</div>
+      <img class="asset divider" src="/ramadan_full_asset_pack/ornament-divider-small.svg" alt="">
+      <img class="asset crescent" src="/ramadan_full_asset_pack/crescent-topper.svg" alt="">
 
-      <div class="main">
-        <aside class="milestones">
-          <div class="milestone" id="milestone0">$50,000</div>
-          <div class="milestone" id="milestone1">$40,000</div>
-          <div class="milestone" id="milestone2">$30,000</div>
-          <div class="milestone" id="milestone3">$20,000</div>
-          <div class="milestone" id="milestone4">$10,000</div>
-          <div class="goal-label">GOAL</div>
-        </aside>
-
-        <div class="thermo">
-          <div class="track">
-            <div class="fill" id="fill"></div>
-          </div>
-          <div class="bulb"></div>
+      <aside class="milestonePanel">
+        <div class="milestoneRow">
+          <img class="milestoneLine" src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestoneValue" id="milestone0">$3,000,000</span>
         </div>
+        <div class="milestoneRow">
+          <img class="milestoneLine" src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestoneValue" id="milestone1">$2,500,000</span>
+        </div>
+        <div class="milestoneRow">
+          <img class="milestoneLine" src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestoneValue" id="milestone2">$2,000,000</span>
+        </div>
+        <div class="milestoneRow">
+          <img class="milestoneLine" src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestoneValue" id="milestone3">$1,500,000</span>
+        </div>
+        <div class="milestoneRow">
+          <img class="milestoneLine" src="/ramadan_full_asset_pack/milestone-line.svg" alt="">
+          <span class="milestoneValue" id="milestone4">$1,000,000</span>
+        </div>
+        <div class="goalLabel">GOAL</div>
+      </aside>
 
-        <aside class="current-box">
-          <p class="current-label">Current Amount</p>
-          <p class="current-value" id="currentAmountText">$0</p>
-        </aside>
+      <aside class="amountPlaque">
+        <img class="amountPanel" src="/ramadan_full_asset_pack/amount-plaque-panel.svg" alt="">
+        <img class="asset amountFrame" src="/ramadan_full_asset_pack/amount-plaque-frame.svg" alt="">
+        <div class="amountText">
+          <span class="amountLabel">Current Amount</span>
+          <span class="amountValue" id="currentAmountText">$0</span>
+        </div>
+      </aside>
+
+      <div class="thermometerArea">
+        <div class="fillClip">
+          <div class="tubeFill" id="fill"></div>
+        </div>
+        <img class="asset tubeShell" src="/ramadan_full_asset_pack/thermometer-shell.svg" alt="">
+        <div class="bulbGlow" id="bulbGlow"></div>
+        <img class="asset bulbAsset" src="/ramadan_full_asset_pack/thermometer-bulb.svg" alt="">
+        <img class="asset bulbCradle" src="/ramadan_full_asset_pack/bulb-cradle.svg" alt="">
       </div>
 
-      <footer class="footer">
-        <p class="cta">Donate Generously</p>
-        <div class="meta">
-          <span id="goalText">Goal: $0</span>
-          <span id="percentText">Progress: 0%</span>
-        </div>
+      <img class="asset flourishLeft" src="/ramadan_full_asset_pack/flourish-left.svg" alt="">
+      <img class="asset flourishRight" src="/ramadan_full_asset_pack/flourish-right.svg" alt="">
+      <img class="asset smallLanternLeft" src="/ramadan_full_asset_pack/lantern-small.svg" alt="">
+      <img class="asset smallLanternRight" src="/ramadan_full_asset_pack/lantern-small.svg" alt="">
+      <img class="asset cornerLeft" src="/ramadan_full_asset_pack/corner-floral-left.svg" alt="">
+      <img class="asset cornerRight" src="/ramadan_full_asset_pack/corner-floral-right.svg" alt="">
+
+      <footer class="ctaWrap">
+        <img class="ctaPlaque" src="/ramadan_full_asset_pack/cta-plaque.svg" alt="">
+        <p class="ctaText">Donate Generously</p>
       </footer>
+
+      <div class="meta">
+        <span id="goalText">Goal: $0</span>
+        &nbsp; | &nbsp;
+        <span id="percentText">Progress: 0%</span>
+      </div>
     </section>
   </main>
 
   <script>
     const DEFAULT_STATE = {
-      maxValue: 50000,
-      currentValue: 13000
+      maxValue: 3000000,
+      currentValue: 1750000
     };
     const POLL_MS = 1500;
     const params = new URLSearchParams(window.location.search);
@@ -370,6 +592,7 @@
     const maxInput = document.getElementById("maxValue");
     const currentInput = document.getElementById("currentValue");
     const fillEl = document.getElementById("fill");
+    const bulbGlowEl = document.getElementById("bulbGlow");
     const currentAmountTextEl = document.getElementById("currentAmountText");
     const goalTextEl = document.getElementById("goalText");
     const percentTextEl = document.getElementById("percentText");
@@ -452,7 +675,7 @@
         statusTextEl.style.borderColor = "#f3cccc";
       } else {
         statusTextEl.style.background = "#f7fbff";
-        statusTextEl.style.borderColor = "#d6dee7";
+        statusTextEl.style.borderColor = "#dfd8c7";
       }
     }
 
@@ -468,14 +691,22 @@
     }
 
     function getMilestones(maxValue) {
-      const step = niceStep(maxValue / 5);
-      return [maxValue, maxValue - step, maxValue - (step * 2), maxValue - (step * 3), maxValue - (step * 4)];
+      const step = niceStep(maxValue / 6);
+      return [
+        maxValue,
+        Math.max(0, maxValue - step),
+        Math.max(0, maxValue - (step * 2)),
+        Math.max(0, maxValue - (step * 3)),
+        Math.max(0, maxValue - (step * 4))
+      ];
     }
 
     function renderMilestones(maxValue) {
-      const milestoneValues = getMilestones(maxValue).map((value) => Math.max(0, value));
+      const milestoneValues = getMilestones(maxValue);
       milestoneEls.forEach((el, idx) => {
-        if (el) el.textContent = formatMoney(milestoneValues[idx] || 0);
+        if (el) {
+          el.textContent = formatMoney(milestoneValues[idx] || 0);
+        }
       });
     }
 
@@ -485,6 +716,7 @@
       const fillPercent = clamp(normalized.currentValue / normalized.maxValue, 0, 1);
 
       fillEl.style.height = (fillPercent * 100) + "%";
+      bulbGlowEl.style.opacity = String(0.72 + fillPercent * 0.28);
       currentAmountTextEl.textContent = formatMoney(normalized.currentValue);
       goalTextEl.textContent = "Goal: " + formatMoney(normalized.maxValue);
       percentTextEl.textContent = "Progress: " + Math.round(fillPercent * 100) + "%";
