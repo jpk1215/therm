@@ -104,14 +104,25 @@
 
     .display {
       position: relative;
-      width: min(860px, 100%);
+      width: min(900px, 100%);
       margin: 0 auto;
       aspect-ratio: 5 / 8;
       overflow: hidden;
       border-radius: 20px;
       box-shadow: var(--soft-shadow);
-      background: linear-gradient(180deg, #fffdf7 0%, #f8eddb 100%);
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.72), rgba(247, 236, 212, 0.45) 56%, rgba(235, 218, 178, 0.35) 100%),
+        linear-gradient(180deg, #fffdf8 0%, #f7ebd2 100%);
       isolation: isolate;
+    }
+
+    .display::after {
+      content: "";
+      position: absolute;
+      inset: 2.7% 3.7% 2.7% 3.7%;
+      border: 1.5px solid rgba(206, 169, 86, 0.32);
+      border-radius: 999px 999px 16px 16px;
+      pointer-events: none;
     }
 
     .asset {
@@ -122,9 +133,13 @@
       pointer-events: none;
     }
 
-    .texture { inset: 0; opacity: 0.27; }
-    .skyline { width: 54%; right: 8%; bottom: 17%; opacity: 0.25; }
+    .texture { inset: 0; opacity: 0.14; }
+    .skyline { width: 54%; right: 9%; bottom: 17%; opacity: 0.21; }
     .arch { inset: 0; }
+    .inner-arch {
+      inset: 9.8% 12.5% 7.4% 12.5%;
+      opacity: 0.58;
+    }
     .trim { width: 80%; left: 10%; top: 8.8%; opacity: 0.17; }
 
     .lanternA { width: 13%; left: 7%; top: 1.8%; }
@@ -134,7 +149,7 @@
 
     .title-wrap {
       position: absolute;
-      top: 10%;
+      top: 10.5%;
       left: 0;
       width: 100%;
       text-align: center;
@@ -146,23 +161,26 @@
       font-size: clamp(1.9rem, 4.6vw, 4rem);
       line-height: 1.02;
       font-weight: 700;
-      color: #7a4f0f;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 3px 14px rgba(108, 72, 18, 0.2);
+      background: linear-gradient(180deg, #3b2a10 0%, #7b5113 34%, #c4963f 65%, #6b4712 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72), 0 3px 14px rgba(108, 72, 18, 0.22);
     }
 
-    .divider { width: 34%; left: 33%; top: 17.4%; opacity: 0.88; }
-    .crescent { width: 11.5%; left: 44.25%; top: 18.5%; }
+    .divider { width: 34%; left: 33%; top: 18.2%; opacity: 0.86; }
+    .crescent { width: 12.6%; left: 43.7%; top: 19.4%; }
 
     .milestones {
       position: absolute;
-      top: 26%;
-      left: 11%;
-      width: 34%;
+      top: 28.5%;
+      left: 10.5%;
+      width: 35%;
     }
 
     .milestone-row {
       position: relative;
-      height: clamp(40px, 4.1vw, 64px);
+      height: clamp(44px, 4.4vw, 68px);
       margin-bottom: clamp(6px, 0.72vw, 11px);
     }
 
@@ -180,7 +198,7 @@
       display: grid;
       place-items: center start;
       padding-left: 8%;
-      font-size: clamp(1rem, 2.3vw, 2rem);
+      font-size: clamp(1.15rem, 2.45vw, 2.08rem);
       font-weight: 900;
       letter-spacing: 0.01em;
       color: #1d1609;
@@ -188,18 +206,18 @@
     }
 
     .goal-label {
-      margin-top: clamp(8px, 1vw, 15px);
+      margin-top: clamp(9px, 1.1vw, 17px);
       padding-left: 8%;
-      font-size: clamp(1.3rem, 2.6vw, 2.2rem);
+      font-size: clamp(1.45rem, 2.9vw, 2.45rem);
       font-weight: 900;
       color: #2f2412;
     }
 
     .amount-plaque {
       position: absolute;
-      width: 36%;
+      width: 35%;
       right: 10%;
-      top: 31%;
+      top: 32.2%;
     }
 
     .amount-plaque .panel { width: 100%; display: block; }
@@ -217,14 +235,14 @@
     .amount-text .label {
       display: block;
       font-family: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
-      font-size: clamp(0.95rem, 2vw, 1.8rem);
+      font-size: clamp(1.05rem, 2.15vw, 1.9rem);
       font-weight: 700;
       color: #4a3612;
     }
 
     .amount-text .value {
       display: block;
-      font-size: clamp(1.35rem, 3.4vw, 3rem);
+      font-size: clamp(1.6rem, 3.8vw, 3.3rem);
       font-weight: 900;
       letter-spacing: 0.01em;
       color: #1c160d;
@@ -232,10 +250,10 @@
 
     .thermo-area {
       position: absolute;
-      width: 26%;
-      left: 37%;
-      top: 22%;
-      height: 57%;
+      width: 31%;
+      left: 34.5%;
+      top: 22.8%;
+      height: 62%;
     }
 
     .fill-clip {
@@ -243,7 +261,7 @@
       left: 0;
       right: 0;
       top: 0;
-      bottom: 17%;
+      bottom: 19%;
       -webkit-mask-image: url("/ramadan_full_asset_pack/thermometer-fill-mask.svg");
       -webkit-mask-size: contain;
       -webkit-mask-repeat: no-repeat;
@@ -263,7 +281,7 @@
       background:
         radial-gradient(circle at 55% 16%, rgba(178, 255, 188, 0.58), transparent 40%),
         linear-gradient(180deg, #4fe07a 0%, #1fae53 45%, #0d7d3b 100%);
-      box-shadow: inset 0 0 24px rgba(10, 130, 55, 0.45), 0 0 24px rgba(32, 177, 77, 0.34);
+      box-shadow: inset 0 0 24px rgba(10, 130, 55, 0.45), 0 0 28px rgba(32, 177, 77, 0.42);
       transition: height 400ms ease;
     }
 
@@ -271,27 +289,27 @@
 
     .bulb-fill {
       position: absolute;
-      width: 42%;
+      width: 48%;
       aspect-ratio: 1 / 1;
-      left: 29%;
-      bottom: 8.8%;
+      left: 26%;
+      bottom: 8.3%;
       border-radius: 999px;
       background:
         radial-gradient(circle at 35% 30%, rgba(208, 255, 200, 0.88), rgba(94, 231, 118, 0.6) 34%, rgba(21, 146, 61, 0.82) 66%, rgba(8, 90, 38, 0.95) 100%);
-      box-shadow: inset 0 -10px 20px rgba(4, 67, 27, 0.5), 0 0 34px rgba(63, 194, 92, 0.45);
+      box-shadow: inset 0 -12px 20px rgba(4, 67, 27, 0.52), 0 0 36px rgba(63, 194, 92, 0.48);
     }
 
-    .bulb-asset { width: 55%; left: 22.5%; bottom: 2%; }
-    .cradle { width: 74%; left: 13%; bottom: -3.2%; }
+    .bulb-asset { width: 66%; left: 17%; bottom: 0.9%; }
+    .cradle { width: 84%; left: 8%; bottom: -4.5%; }
 
-    .flourishL { width: 11%; left: 29%; bottom: 19%; }
-    .flourishR { width: 11%; right: 29%; bottom: 19%; }
+    .flourishL { width: 11%; left: 25%; bottom: 18%; }
+    .flourishR { width: 11%; right: 25%; bottom: 18%; }
 
     .cta-wrap {
       position: absolute;
-      left: 23%;
-      bottom: 4%;
-      width: 54%;
+      left: 21%;
+      bottom: 3.3%;
+      width: 58%;
     }
 
     .cta-wrap img { width: 100%; display: block; }
@@ -302,7 +320,7 @@
       place-items: center;
       margin: 0;
       font-family: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
-      font-size: clamp(1.65rem, 3.9vw, 3.4rem);
+      font-size: clamp(2rem, 4.4vw, 3.7rem);
       font-weight: 700;
       color: #3b2a0d;
     }
@@ -316,6 +334,9 @@
     @media (max-width: 960px) {
       .container.control-mode { grid-template-columns: 1fr; }
       .display { width: min(820px, 100%); }
+      .thermo-area { width: 34%; left: 33%; }
+      .milestones { width: 37%; left: 8.6%; }
+      .amount-plaque { width: 38%; right: 8%; }
     }
   </style>
 </head>
@@ -342,6 +363,7 @@
       <img class="asset texture" src="/ramadan_full_asset_pack/ivory-speckle-overlay.svg" alt="">
       <img class="asset skyline" src="/ramadan_full_asset_pack/mosque-skyline.svg" alt="">
       <img class="asset arch" src="/ramadan_full_asset_pack/arch-frame-ornate.svg" alt="">
+      <img class="asset inner-arch" src="/ramadan_full_asset_pack/arch-frame.svg" alt="">
       <img class="asset trim" src="/ramadan_full_asset_pack/islamic-border-pattern.svg" alt="">
 
       <img class="asset lanternA" src="/ramadan_full_asset_pack/lantern-large-a.svg" alt="">
@@ -525,8 +547,26 @@
       }
     }
 
+    function niceStep(rawStep) {
+      const safeStep = Math.max(1, rawStep);
+      const magnitude = 10 ** Math.floor(Math.log10(safeStep));
+      const normalized = safeStep / magnitude;
+
+      if (normalized <= 1) return 1 * magnitude;
+      if (normalized <= 2) return 2 * magnitude;
+      if (normalized <= 5) return 5 * magnitude;
+      return 10 * magnitude;
+    }
+
     function getMilestones(maxValue) {
-      return [1, 5 / 6, 2 / 3, 1 / 2, 1 / 3].map((ratio) => Math.round(maxValue * ratio));
+      const step = niceStep(maxValue / 6);
+      return [
+        maxValue,
+        Math.max(0, maxValue - step),
+        Math.max(0, maxValue - (step * 2)),
+        Math.max(0, maxValue - (step * 3)),
+        Math.max(0, maxValue - (step * 4))
+      ];
     }
 
     function renderMilestones(maxValue) {
